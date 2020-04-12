@@ -19,7 +19,8 @@ export const createGame = () => {
 };
 
 const getName = () => {
-  const name = dockerNames.getRandomName();
+  let name = dockerNames.getRandomName();
+  name = name.replace('_', '-');
   const game = games.find((g) => g.gameId === name);
   if (game) {
     getName();
@@ -52,6 +53,7 @@ export const playerJoins = (playerName, gameId) => {
     points: 0,
     redThrees: [],
     myTurn: false,
+    hasDrawn: false,
     extraFirstTurn: 0,
   };
   game.players.push(player);
@@ -87,6 +89,7 @@ const clearGameBoard = (game) => {
     player.meld = [];
     player.redThrees = [];
     player.myTurn = false;
+    player.hasDrawn = false;
     player.extraFirstTurn = 0;
   }
 };

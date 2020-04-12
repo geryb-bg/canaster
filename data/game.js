@@ -89,6 +89,7 @@ export const games = [
           },
         ],
         myTurn: false,
+        hasDrawn: false,
         extraFirstTurn: 1,
       },
       {
@@ -176,6 +177,7 @@ export const games = [
         points: 0,
         redThrees: [],
         myTurn: true,
+        hasDrawn: false,
         extraFirstTurn: 0,
       },
     ],

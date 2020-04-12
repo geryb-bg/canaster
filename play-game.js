@@ -28,9 +28,13 @@ export const playerDraw = (playerName, gameId) => {
   if (!player.myTurn) {
     return { error: 'It is not your turn!' };
   }
+  if (player.hasDrawn) {
+    return { error: 'You have already drawn a card' };
+  }
 
   const newCards = [];
   drawAgain(game.drawPile, player, newCards);
+  player.hasDrawn = true;
 
   return {
     cards: player.cards.sort((a, b) => a.sortOrder - b.sortOrder),
@@ -66,6 +70,9 @@ export const playerDiscard = (playerName, gameId, card) => {
   if (!player.myTurn) {
     return { error: 'It is not your turn!' };
   }
+  if (!player.hasDrawn) {
+    return { error: 'You must draw a card first' };
+  }
 
   const playerCard = player.cards.find((c) => c.value === card.value && c.suite === card.suite);
   const indexOfDiscarded = player.cards.indexOf(playerCard);
@@ -81,6 +88,7 @@ export const playerDiscard = (playerName, gameId, card) => {
   }
 
   player.myTurn = false;
+  player.hasDrawn = false;
   let playersTurn = game.players.indexOf(player) + 1;
   if (playersTurn === game.players.length) {
     playersTurn = 0;
