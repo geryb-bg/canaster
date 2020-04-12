@@ -1,4 +1,4 @@
-import cardTypes from 'data/cards.json';
+import onePack from 'data/cards.json';
 import rules from 'data/rules.json';
 
 const games = [];
@@ -58,7 +58,12 @@ export const startGame = (gameId) => {
   }
 
   game.started = true;
-  dealCards();
+  assignPacks(game);
+  dealCards(game);
 };
 
-const dealCards = () => {};
+const assignPacks = (game) => {
+  const numPacks = rules.packs.find((p) => p.players === game.players.length);
+};
+
+const dealCards = (game) => {};
