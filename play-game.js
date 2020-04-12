@@ -2,8 +2,11 @@ import { games } from './data/game.js';
 
 export const playerCards = (playerName, gameId) => {
   const game = games.find((g) => g.gameId === gameId);
-  if (!game || !game.started) {
+  if (!game) {
     return { error: 'This game does not exist or has not yet started.' };
+  }
+  if (!game.started) {
+    return { waiting: true };
   }
   const player = game.players.find((p) => p.name === playerName);
   if (!player) {
@@ -51,7 +54,7 @@ const drawAgain = (drawPile, player, newCards) => {
   }
 };
 
-export const playerDrawDiscard = (playerName, gameId) => {
+export const playerDiscard = (playerName, gameId, card) => {
   const game = games.find((g) => g.gameId === gameId);
   if (!game || !game.started) {
     return { error: 'This game does not exist or has not yet started.' };
@@ -64,8 +67,69 @@ export const playerDrawDiscard = (playerName, gameId) => {
     return { error: 'It is not your turn!' };
   }
 
-  //TODO
+  const indexOfDiscarded = player.cards.indexOf(card);
+  player.cards.splice(indexOfDiscarded, 1);
+  game.discardPile.push(card);
+
+  if (card.value === '3' && card.colour === 'black') {
+    game.discardPile = [];
+  }
+
+  player.myTurn = false;
+  let playersTurn = game.players.indexOf(player) + 1;
+  if (playersTurn === game.players.length) {
+    playersTurn = 0;
+  }
+  game.players[playersTurn].myTurn = true;
+
+  return player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
 };
+
+// export const playerDrawDiscard = (playerName, gameId, meldedCards) => {
+//   const game = games.find((g) => g.gameId === gameId);
+//   if (!game || !game.started) {
+//     return { error: 'This game does not exist or has not yet started.' };
+//   }
+//   if (!game.discardPile.length) {
+//     return { error: 'There is not discard pile to draw from.' };
+//   }
+//   const player = game.players.find((p) => p.name === playerName);
+//   if (!player) {
+//     return { error: 'This player does not exist in this game.' };
+//   }
+//   if (!player.myTurn) {
+//     return { error: 'It is not your turn!' };
+//   }
+
+//   if (canDraw()) {
+//     //give cards
+//   } else {
+//     return { error: 'You do not meet the requirements to draw from this pile' };
+//   }
+// };
+
+// const canDraw = () => {
+//   //scenario 1 - nothing in meld - must meet required points
+//   //scenario 2 - top draw card exists in meld - just adding it
+//   //scenrio 3 - top draw card not in meld - creating new group in meld
+// };
+
+// export const meldCards = (playerName, gameId, meldedCards) => {
+//   const game = games.find((g) => g.gameId === gameId);
+//   if (!game || !game.started) {
+//     return { error: 'This game does not exist or has not yet started.' };
+//   }
+//   const player = game.players.find((p) => p.name === playerName);
+//   if (!player) {
+//     return { error: 'This player does not exist in this game.' };
+//   }
+//   if (!player.myTurn) {
+//     return { error: 'It is not your turn!' };
+//   }
+//   if (!meldedCards.length) {
+
+//   }
+// };
 
 export const drawCard = (drawPile) => {
   const randomIndex = Math.floor(Math.random() * drawPile.length);

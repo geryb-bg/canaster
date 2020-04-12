@@ -1,11 +1,13 @@
 import express from 'express';
+import bodyParser from 'body-parser';
 import { createGame, playerJoins, startGame } from './create-game.js';
 import { games } from './data/game.js';
-import { playerCards, playerDraw } from './play-game.js';
+import { playerCards, playerDraw, playerDiscard } from './play-game.js';
 
 const app = express();
 const port = 3000;
 
+app.use(bodyParser.json());
 app.use(express.static('public'));
 
 app.get('/', (req, res) => res.send('Hello World!'));
@@ -41,6 +43,11 @@ app.get('/cards/:playerName/:gameId', (req, res) => {
 
 app.get('/draw/:playerName/:gameId', (req, res) => {
   const result = playerDraw(req.params.playerName, req.params.gameId);
+  res.send(result);
+});
+
+app.get('/discard/:playerName/:gameId', (req, res) => {
+  const result = playerDiscard(req.params.playerName, req.params.gameId, req.body.card);
   res.send(result);
 });
 

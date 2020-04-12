@@ -72,7 +72,6 @@ export const startGame = (gameId) => {
   game.started = true;
   game.round++;
   const playersTurn = game.round % game.players.length;
-  console.log(playersTurn);
   game.players[playersTurn].myTurn = true;
   assignPacks(game);
   dealCards(game);
@@ -104,7 +103,7 @@ const dealCards = (game) => {
       const newCard = drawCard(game.drawPile);
       if (newCard.value === '3' && newCard.colour === 'red') {
         player.redThrees.push(newCard);
-        extraFirstTurn++;
+        player.extraFirstTurn++;
       } else {
         player.cards.push(newCard);
       }
