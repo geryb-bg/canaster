@@ -12,7 +12,6 @@ function renderHand() {
   const cardRow = document.querySelector("#card-row");
 
   for (let card of hand) {
-    console.log(card)
     const cardElement = document.createElement("game-card");
     cardElement.setAttribute('colour', card.colour);
     cardElement.setAttribute('value', card.value);
@@ -21,6 +20,20 @@ function renderHand() {
     cardRow.appendChild(cardElement);
   }
 }
+
+function getSelectedCards() {
+  const cardElements = document.querySelectorAll("game-card[selected]");
+  const res = [];
+  cardElements.forEach((c) => {
+    res.push(c.getCard())
+  });
+  return res;
+}
+
+const drawButton = document.querySelector('#draw');
+drawButton.addEventListener('click', () => {
+  console.log(getSelectedCards())
+})
 
 fetchHand().then(() => {
   renderHand();
