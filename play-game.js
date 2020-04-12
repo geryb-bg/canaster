@@ -3,7 +3,7 @@ import { games } from './data/game.js';
 export const playerCards = (playerName, gameId) => {
   const game = games.find((g) => g.gameId === gameId);
   if (!game) {
-    return { error: 'This game does not exist or has not yet started.' };
+    return { error: 'This game does not exist.' };
   }
   if (!game.started) {
     return { waiting: true };
@@ -67,7 +67,12 @@ export const playerDiscard = (playerName, gameId, card) => {
     return { error: 'It is not your turn!' };
   }
 
-  const indexOfDiscarded = player.cards.indexOf(card);
+  const playerCard = player.cards.find((c) => c.value === card.value && c.suite === card.suite);
+  const indexOfDiscarded = player.cards.indexOf(playerCard);
+  if (indexOfDiscarded < 0) {
+    return { error: 'This card is not in your hand' };
+  }
+
   player.cards.splice(indexOfDiscarded, 1);
   game.discardPile.push(card);
 
