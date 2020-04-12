@@ -1,7 +1,7 @@
 import dockerNames from 'docker-names';
 import { cards } from './data/cards.js';
 import { rules } from './data/rules.js';
-import { games } from './game.js';
+import { games } from './data/game.js';
 
 export const createGame = () => {
   const newGameId = getName();
@@ -46,6 +46,7 @@ export const playerJoins = (playerName, gameId) => {
     name: playerName,
     cards: [],
     meld: [],
+    points: 0,
   };
   game.players.push(player);
   return 'Added';
@@ -71,14 +72,14 @@ export const startGame = (gameId) => {
 
 const assignPacks = (game) => {
   const numPacks = rules.packs.find((p) => p.players === game.players.length);
-  for (const i = 0; i < numPacks.packs; i++) {
-    game.cards.push(cards.onePack);
+  for (let i = 0; i < numPacks.packs; i++) {
+    game.drawPile = game.drawPile.concat(cards.onePack);
   }
 };
 
 const dealCards = (game) => {
-  for (const player of players) {
-    for (const i = 0; i < rules.startingHand; i++) {
+  for (let player of game.players) {
+    for (let i = 0; i < rules.startingHand; i++) {
       player.cards.push(drawCard(game.drawPile));
     }
   }
@@ -88,21 +89,23 @@ const dealCards = (game) => {
   discardCard(game.drawPile, game.discardPile, drawCard(game.drawPile), true, false);
 };
 
-const drawCard = (drawPile) => {
+export const drawCard = (drawPile) => {
   const randomIndex = Math.floor(Math.random() * drawPile.length);
   const chosenCard = drawPile.splice(randomIndex, 1);
   return chosenCard[0];
 };
 
-const discardCard = (drawPile, discardPile, card, firstTurn, upsideDown) => {
+export const discardCard = (drawPile, discardPile, card, firstTurn, upsideDown) => {
   discardPile.push(card);
 
   if (upsideDown) return;
 
   const isSpecialCard = cards.specialCards.find((c) => c === card.value);
-  if (firstTurn) {
-    discardCard(drawPile, discardPile, drawCard(drawPile), true, false);
-  } else if (card.value === '3' && card.colour === 'black') {
-    discardPile = [];
+  if (isSpecialCard) {
+    if (firstTurn) {
+      discardCard(drawPile, discardPile, drawCard(drawPile), true, false);
+    } else if (card.value === '3' && card.colour === 'black') {
+      discardPile = [];
+    }
   }
 };
