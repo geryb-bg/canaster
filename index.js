@@ -1,10 +1,22 @@
 import express from 'express';
+import { playerJoins } from './create-game';
+import { createGame, playerJoins } from './create-game';
+
 const app = express();
 const port = 3000;
 
 app.use(express.static('public'));
 
 app.get('/', (req, res) => res.send('Hello World!'));
+
+app.post('/start', (req, res) => {
+  const game = createGame();
+  res.send(game);
+});
+
+app.post('/player/:playerName/:gameId', (req, res) => {
+  const message = playerJoins(req.params.playerName, req.params.gameId);
+});
 
 app.get('/cards/:playerName/:gameId', (req, res) => {
   const cards = [
