@@ -2,6 +2,8 @@ import "../components/game-card/game-card.js";
 import "../components/game-dialog/game-dialog.js";
 import "../components/game-button/game-button.js";
 
+import {fetchJson, getGameId, getPlayerName} from '../common.js'
+
 let hand = [];
 
 function begin() {
@@ -114,46 +116,21 @@ function getSelectedCards() {
   return res;
 }
 
-function getUrlHashParams() {
-  return new URLSearchParams(
-    window.location.hash.substr(1) // skip the first char (#)
-  );
-}
-
-function setPlayerAndGameInUrl(playerName, gameId) {
-  window.location.hash = `player_name=${playerName}&game_id=${gameId}`;
-}
-
-function getPlayerName() {
-  return getUrlHashParams().get("player_name");
-}
-
-function getGameId() {
-  return getUrlHashParams().get("game_id");
-}
-
-async function fetchJson(url, options = {}) {
-  try {
-    const response = await (await fetch(url, options)).json();
-    if (response.error) {
-      document.dispatchEvent(
-        new CustomEvent("show-message", {
-          detail: { message: response.error },
-        })
-      );
-    }
-    return response;
-  } catch (e) {
-    document.dispatchEvent(
-      new CustomEvent("show-message", {
-        detail: { message: e.message },
-      })
-    );
-  }
-}
-
 const drawButton = document.querySelector("#draw");
-drawButton.addEventListener("click", () => {
+drawButton.addEventListener("click", async () => {
+  const response = await fetchJson(`/draw/${getPlayerName()}/${getGameId()}`);
+  if (response.error) {
+
+  }
+
+  console.log(getSelectedCards());
+});
+
+const discardButton = document.querySelector("#discard");
+discardButton.addEventListener("click", async () => {
+  const response = await fetchJson(`/discard/${getPlayerName()}/${getGameId()}`);
+
+
   console.log(getSelectedCards());
 });
 
