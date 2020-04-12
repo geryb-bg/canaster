@@ -12,6 +12,7 @@ export const createGame = () => {
     players: [],
     drawPile: [],
     discardPile: [],
+    round: 0,
   };
   games.push(gameState);
   return gameState;
@@ -29,18 +30,18 @@ const getName = () => {
 export const playerJoins = (playerName, gameId) => {
   const game = games.find((g) => g.gameId === gameId);
   if (!game) {
-    return 'This game does not exist.';
+    return { error: 'This game does not exist.' };
   }
   if (game.started) {
-    return 'This game has already started, please join a different game.';
+    return { error: 'This game has already started, please join a different game.' };
   }
   if (game.players.length === 8) {
-    return 'This game has too many players, please join a different game.';
+    return { error: 'This game has too many players, please join a different game.' };
   }
 
   const playerExists = game.players.find((p) => p.name === playerName);
   if (playerExists) {
-    return `This game already contains a player called ${playerName}, please choose a differentName.`;
+    return { error: `This game already contains a player called ${playerName}, please choose a differentName.` };
   }
 
   const player = {
@@ -48,27 +49,44 @@ export const playerJoins = (playerName, gameId) => {
     cards: [],
     meld: [],
     points: 0,
+    redThrees: [],
+    myTurn: false,
   };
   game.players.push(player);
-  return 'Added';
+  return { msg: 'Added' };
 };
 
 export const startGame = (gameId) => {
   const game = games.find((g) => g.gameId === gameId);
   if (!game) {
-    return 'This game does not exist.';
-  }
-  if (game.started) {
-    return 'This game has already started, how did you even get here?';
+    return { error: 'This game does not exist.' };
   }
   if (game.players.length < 2) {
-    return 'A game needs at least two players.';
+    return { error: 'A game needs at least two players.' };
+  }
+  if (game.round > 0) {
+    clearGameBoard(game);
   }
 
   game.started = true;
+  game.round++;
+  const playersTurn = game.round % game.players.length;
+  console.log(playersTurn);
+  game.players[playersTurn].myTurn = true;
   assignPacks(game);
   dealCards(game);
   return game;
+};
+
+const clearGameBoard = (game) => {
+  game.drawPile = [];
+  game.discardPile = [];
+  for (let player of game.players) {
+    player.cards = [];
+    player.meld = [];
+    player.redThrees = [];
+    player.myTurn = false;
+  }
 };
 
 const assignPacks = (game) => {

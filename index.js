@@ -1,7 +1,7 @@
 import express from 'express';
 import { createGame, playerJoins, startGame } from './create-game.js';
 import { games } from './data/game.js';
-import { playerCards } from './play-game.js';
+import { playerCards, playerDraw } from './play-game.js';
 
 const app = express();
 const port = 3000;
@@ -37,6 +37,11 @@ app.post('/player/:playerName/:gameId', (req, res) => {
 app.get('/cards/:playerName/:gameId', (req, res) => {
   const cards = playerCards(req.params.playerName, req.params.gameId);
   res.send(cards);
+});
+
+app.get('/draw/:playerName/:gameId', (req, res) => {
+  const result = playerDraw(req.params.playerName, req.params.gameId);
+  res.send(result);
 });
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
