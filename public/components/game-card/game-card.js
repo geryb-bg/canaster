@@ -15,6 +15,7 @@ const template = (props) => `
         border-radius: 5px;
         box-shadow: 2px 2px 10px 0px rgba(0,0,0,0.75);
         padding: 0.5em;
+        justify-content: space-between;
         
         margin-top: -100px;
         margin-left: -50px;
@@ -26,11 +27,24 @@ const template = (props) => `
         `}
 
       }
+      
+      #bottom-right {
+        align-self: flex-end;
+        text-align: center;
+      }
+      
     </style>
 
     <div class="card">
-        <div>${props.value}</div>
-        <div>${props.icon}</div>
+        <div id="top-left">
+            <div>${props.value}</div>
+            <div>${props.icon}</div>
+        </div>
+        <div id="bottom-right">
+            <div>${props.icon}</div>
+            <div>${props.value}</div>
+        </div>
+        
     </div>`;
 
 customElements.define(
