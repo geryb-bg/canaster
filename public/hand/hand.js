@@ -1,9 +1,11 @@
 import "../components/game-card/game-card.js";
-import "../components/game-dialog/game-dialog.js";
 import "../components/game-button/game-button.js";
+import "../components/game-dialog/game-dialog.js";
 import "../components/card-collection/card-collection.js";
+import "../components/error-message/error-message.js";
+import "../components/card-dialog/card-dialog.js";
 
-import {fetchJson, getGameId, getPlayerName} from '../common.js'
+import {fetchJson, getGameId, getPlayerName, setPlayerAndGameInUrl, clearNode} from '../common.js'
 
 let hand = [];
 
@@ -87,12 +89,6 @@ function hideWaitForGameToStart() {
   document.querySelector('#waiting-overlay').style.display = "none";
 }
 
-function clearNode(node) {
-  while (node.lastElementChild) {
-    node.removeChild(node.lastElementChild);
-  }
-}
-
 function renderHand() {
   const cardRow = document.querySelector("#card-row");
 
@@ -104,6 +100,7 @@ function renderHand() {
     cardElement.setAttribute("value", card.value);
     cardElement.setAttribute("icon", card.icon);
     cardElement.setAttribute("suite", card.suite);
+    cardElement.selectable = true;
     cardRow.appendChild(cardElement);
   }
 }
@@ -117,6 +114,15 @@ function getSelectedCards() {
   return res;
 }
 
+function showCardsInPopup(cards) {
+  const message = cards.length > 1 ? 'Cards drawn:' : 'Card drawn:';
+  document.dispatchEvent(
+    new CustomEvent("show-cards", {
+      detail: { message: message, cards: cards },
+    })
+  );
+}
+
 const drawButton = document.querySelector("#draw");
 drawButton.addEventListener("click", async () => {
   const response = await fetchJson(`/draw/${getPlayerName()}/${getGameId()}`);
@@ -124,9 +130,9 @@ drawButton.addEventListener("click", async () => {
     return
   }
 
-  //todo show which cards were drawn
   hand = response.cards;
-  renderHand()
+  renderHand();
+  showCardsInPopup(response.new)
 });
 
 const discardButton = document.querySelector("#discard");

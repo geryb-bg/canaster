@@ -58,6 +58,7 @@ customElements.define(
       super();
       this.shadow = this.attachShadow({ mode: "open" });
       this.selected = false;
+      this.selectable = false;
     }
 
     render() {
@@ -65,7 +66,9 @@ customElements.define(
       this.shadow.innerHTML = template(this);
 
       this.onclick = () => {
-        this.toggleSelected();
+        if (this.selectable) {
+          this.toggleSelected();
+        }
       };
     }
 

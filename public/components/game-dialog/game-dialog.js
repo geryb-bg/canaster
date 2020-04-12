@@ -23,17 +23,10 @@ const template = (props) => `
           justify-content: center;
       }
       
-      #hide-dialog-button {
-        align-self: center;
-      }
-     
-      
     </style>
     
     <div id="dialog">
-        <div id="message">${props.message}</div>
-        <br>
-        <game-button id="hide-dialog-button">OK</game-button>
+        <slot></slot>
     </div>
 
 
@@ -43,7 +36,7 @@ customElements.define(
   "game-dialog",
   class GameDialog extends HTMLElement {
     static get observedAttributes() {
-      return ["message"];
+      return [];
     }
 
     constructor() {
@@ -53,10 +46,6 @@ customElements.define(
 
     render() {
       this.shadow.innerHTML = template(this);
-      const button = this.shadow.querySelector('#hide-dialog-button');
-      button.addEventListener('click', () => {
-        this.parentNode.removeChild(this)
-      })
     }
 
     connectedCallback() {
@@ -73,9 +62,3 @@ customElements.define(
   }
 );
 
-document.addEventListener('show-message', (e) => {
-  const dialog = document.createElement('game-dialog');
-  dialog.message = e.detail.message;
-
-  document.body.appendChild(dialog);
-});

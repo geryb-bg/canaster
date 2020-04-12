@@ -35,3 +35,9 @@ export function getPlayerName() {
 export function getGameId() {
   return getUrlHashParams().get("game_id");
 }
+
+export function clearNode(node) {
+  while (node.lastElementChild) {
+    node.removeChild(node.lastElementChild);
+  }
+}
