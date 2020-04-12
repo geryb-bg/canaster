@@ -10,6 +10,7 @@ export const games = [
         points: 0,
         redThrees: [],
         myTurn: false,
+        extraFirstTurn: 0,
       },
       {
         name: 'Gery',
@@ -18,6 +19,7 @@ export const games = [
         points: 0,
         redThrees: [],
         myTurn: false,
+        extraFirstTurn: 0,
       },
     ],
     drawPile: [],

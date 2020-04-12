@@ -7,7 +7,7 @@ export const playerCards = (playerName, gameId) => {
   }
   const player = game.players.find((p) => p.name === playerName);
   if (!player) {
-    return { error: 'This player does not exist in this game' };
+    return { error: 'This player does not exist in this game.' };
   }
 
   return player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
@@ -20,15 +20,35 @@ export const playerDraw = (playerName, gameId) => {
   }
   const player = game.players.find((p) => p.name === playerName);
   if (!player) {
-    return { error: 'This player does not exist in this game' };
+    return { error: 'This player does not exist in this game.' };
+  }
+  if (!player.myTurn) {
+    return { error: 'It is not your turn!' };
   }
 
-  const newCard = drawCard(game.drawPile);
-  player.cards.push(newCard);
+  const newCards = [];
+  drawAgain(game.drawPile, player, newCards);
+
   return {
     cards: player.cards.sort((a, b) => a.sortOrder - b.sortOrder),
-    new: [newCard],
+    new: newCards,
   };
+};
+
+const drawAgain = (drawPile, player, newCards) => {
+  const newCard = drawCard(drawPile);
+  newCards.push(newCard);
+
+  if (newCard.value === '3' && newCard.colour === 'red') {
+    player.redThrees.push(newCard);
+  } else {
+    player.cards.push(newCard);
+  }
+
+  if (player.extraFirstTurn) {
+    player.extraFirstTurn--;
+    drawAgain(drawPile, player, newCards);
+  }
 };
 
 export const playerDrawDiscard = (playerName, gameId) => {
@@ -38,8 +58,13 @@ export const playerDrawDiscard = (playerName, gameId) => {
   }
   const player = game.players.find((p) => p.name === playerName);
   if (!player) {
-    return { error: 'This player does not exist in this game' };
+    return { error: 'This player does not exist in this game.' };
   }
+  if (!player.myTurn) {
+    return { error: 'It is not your turn!' };
+  }
+
+  //TODO
 };
 
 export const drawCard = (drawPile) => {

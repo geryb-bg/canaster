@@ -51,6 +51,7 @@ export const playerJoins = (playerName, gameId) => {
     points: 0,
     redThrees: [],
     myTurn: false,
+    extraFirstTurn: 0,
   };
   game.players.push(player);
   return { msg: 'Added' };
@@ -86,6 +87,7 @@ const clearGameBoard = (game) => {
     player.meld = [];
     player.redThrees = [];
     player.myTurn = false;
+    player.extraFirstTurn = 0;
   }
 };
 
@@ -99,7 +101,13 @@ const assignPacks = (game) => {
 const dealCards = (game) => {
   for (let player of game.players) {
     for (let i = 0; i < rules.startingHand; i++) {
-      player.cards.push(drawCard(game.drawPile));
+      const newCard = drawCard(game.drawPile);
+      if (newCard.value === '3' && newCard.colour === 'red') {
+        player.redThrees.push(newCard);
+        extraFirstTurn++;
+      } else {
+        player.cards.push(newCard);
+      }
     }
   }
   drawPileTurnOver(game.drawPile, game.discardPile, drawCard(game.drawPile), true);
