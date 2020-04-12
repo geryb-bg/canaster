@@ -12,7 +12,12 @@ function renderHand() {
   const cardRow = document.querySelector("#card-row");
 
   for (let card of hand) {
+    console.log(card)
     const cardElement = document.createElement("game-card");
+    cardElement.setAttribute('colour', card.colour);
+    cardElement.setAttribute('value', card.value);
+    cardElement.setAttribute('icon', card.icon);
+    cardElement.setAttribute('suite', card.suite);
     cardRow.appendChild(cardElement);
   }
 }
