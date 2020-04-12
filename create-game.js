@@ -32,16 +32,17 @@ export const playerJoins = (playerName, gameId) => {
   if (!game) {
     return { error: 'This game does not exist.' };
   }
+
+  const playerExists = game.players.find((p) => p.name === playerName);
+  if (playerExists) {
+    return { msg: 'Player joined' };
+  }
+
   if (game.started) {
     return { error: 'This game has already started, please join a different game.' };
   }
   if (game.players.length === 8) {
     return { error: 'This game has too many players, please join a different game.' };
-  }
-
-  const playerExists = game.players.find((p) => p.name === playerName);
-  if (playerExists) {
-    return { error: `This game already contains a player called ${playerName}, please choose a differentName.` };
   }
 
   const player = {
@@ -54,7 +55,7 @@ export const playerJoins = (playerName, gameId) => {
     extraFirstTurn: 0,
   };
   game.players.push(player);
-  return { msg: 'Added' };
+  return { msg: 'Player joined' };
 };
 
 export const startGame = (gameId) => {
