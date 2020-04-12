@@ -18,6 +18,10 @@ app.get('/game', (req, res) => {
 
 app.get('/game/:gameId', (req, res) => {
   const game = games.find((g) => g.gameId === req.params.gameId);
+  if (!game) {
+    res.send({ error: 'Game does not exist' });
+    return;
+  }
   res.send(game);
 });
 

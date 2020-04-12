@@ -3,7 +3,7 @@ export async function fetchJson(url, options = {}) {
     const response = await (await fetch(url, options)).json();
     if (response.error) {
       document.dispatchEvent(
-        new CustomEvent("show-message", {
+        new CustomEvent('show-message', {
           detail: { message: response.error },
         })
       );
@@ -11,7 +11,7 @@ export async function fetchJson(url, options = {}) {
     return response;
   } catch (e) {
     document.dispatchEvent(
-      new CustomEvent("show-message", {
+      new CustomEvent('show-message', {
         detail: { message: e.message },
       })
     );
@@ -28,12 +28,16 @@ export function setPlayerAndGameInUrl(playerName, gameId) {
   window.location.hash = `player_name=${playerName}&game_id=${gameId}`;
 }
 
+export function setGameInUrl(gameId) {
+  window.location.hash = `game_id=${gameId}`;
+}
+
 export function getPlayerName() {
-  return getUrlHashParams().get("player_name");
+  return getUrlHashParams().get('player_name');
 }
 
 export function getGameId() {
-  return getUrlHashParams().get("game_id");
+  return getUrlHashParams().get('game_id');
 }
 
 export function clearNode(node) {

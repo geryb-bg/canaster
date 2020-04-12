@@ -3,7 +3,22 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="../style/reset.css" />
+    <link rel="stylesheet" type="text/css" href="main.css" />
     <title>Awesome Friends Canaster</title>
   </head>
-  <body></body>
+  <body>
+    <div id="content">
+      <h1 id="game-name"></h1>
+      <div id="players"></div>
+    </div>
+
+    <div id="new-game" style="display: none;">
+      <game-button id="create-game">Create new game</game-button>
+      <game-button id="join-game">Join an existing game</game-button>
+    </div>
+
+    <script type="module" src="main.js"></script>
+  </body>
 </html>
