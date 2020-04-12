@@ -2,6 +2,7 @@ import dockerNames from 'docker-names';
 import { cards } from './data/cards.js';
 import { rules } from './data/rules.js';
 import { games } from './data/game.js';
+import { drawCard } from './play-game.js';
 
 export const createGame = () => {
   const newGameId = getName();
@@ -83,29 +84,23 @@ const dealCards = (game) => {
       player.cards.push(drawCard(game.drawPile));
     }
   }
-  discardCard(game.drawPile, game.discardPile, drawCard(game.drawPile), false, true);
-  discardCard(game.drawPile, game.discardPile, drawCard(game.drawPile), false, true);
-  discardCard(game.drawPile, game.discardPile, drawCard(game.drawPile), false, true);
-  discardCard(game.drawPile, game.discardPile, drawCard(game.drawPile), true, false);
+  drawPileTurnOver(game.drawPile, game.discardPile, drawCard(game.drawPile), true);
+  drawPileTurnOver(game.drawPile, game.discardPile, drawCard(game.drawPile), true);
+  drawPileTurnOver(game.drawPile, game.discardPile, drawCard(game.drawPile), true);
+  drawPileTurnOver(game.drawPile, game.discardPile, drawCard(game.drawPile), false);
 };
 
-export const drawCard = (drawPile) => {
-  const randomIndex = Math.floor(Math.random() * drawPile.length);
-  const chosenCard = drawPile.splice(randomIndex, 1);
-  return chosenCard[0];
-};
-
-export const discardCard = (drawPile, discardPile, card, firstTurn, upsideDown) => {
+const drawPileTurnOver = (drawPile, discardPile, card, upsideDown) => {
   discardPile.push(card);
 
   if (upsideDown) return;
 
   const isSpecialCard = cards.specialCards.find((c) => c === card.value);
   if (isSpecialCard) {
-    if (firstTurn) {
-      discardCard(drawPile, discardPile, drawCard(drawPile), true, false);
-    } else if (card.value === '3' && card.colour === 'black') {
+    if (card.value === '3' && card.colour === 'black') {
       discardPile = [];
+    } else {
+      drawPileTurnOver(drawPile, discardPile, drawCard(drawPile), false);
     }
   }
 };

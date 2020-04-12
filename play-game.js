@@ -6,3 +6,9 @@ export const playerCards = (playerName, gameId) => {
 
   return player.cards;
 };
+
+export const drawCard = (drawPile) => {
+  const randomIndex = Math.floor(Math.random() * drawPile.length);
+  const chosenCard = drawPile.splice(randomIndex, 1);
+  return chosenCard[0];
+};
