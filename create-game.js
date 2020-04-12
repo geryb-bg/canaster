@@ -1,7 +1,7 @@
 import dockerNames from 'docker-names';
-import cards from './data/cards.json';
-import rules from './data/rules.json';
-import { games } from './game';
+import { cards } from './data/cards.js';
+import { rules } from './data/rules.js';
+import { games } from './game.js';
 
 export const createGame = () => {
   const newGameId = getName();
@@ -66,6 +66,7 @@ export const startGame = (gameId) => {
   game.started = true;
   assignPacks(game);
   dealCards(game);
+  return game;
 };
 
 const assignPacks = (game) => {
