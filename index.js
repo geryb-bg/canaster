@@ -46,7 +46,7 @@ app.get('/draw/:playerName/:gameId', (req, res) => {
   res.send(result);
 });
 
-app.get('/discard/:playerName/:gameId', (req, res) => {
+app.post('/discard/:playerName/:gameId', (req, res) => {
   const result = playerDiscard(req.params.playerName, req.params.gameId, req.body.card);
   res.send(result);
 });

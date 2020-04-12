@@ -5,7 +5,14 @@ import "../components/card-collection/card-collection.js";
 import "../components/error-message/error-message.js";
 import "../components/card-dialog/card-dialog.js";
 
-import {fetchJson, getGameId, getPlayerName, setPlayerAndGameInUrl, clearNode, showError} from '../common.js'
+import {
+  fetchJson,
+  getGameId,
+  getPlayerName,
+  setPlayerAndGameInUrl,
+  clearNode,
+  showError,
+} from "../common.js";
 
 let hand = [];
 
@@ -74,7 +81,7 @@ async function fetchHand() {
 
   if (response.waiting) {
     showWaitForGameToStart();
-    setTimeout(fetchHand, 4000)
+    setTimeout(fetchHand, 4000);
   } else {
     hideWaitForGameToStart();
     hand = response;
@@ -82,11 +89,11 @@ async function fetchHand() {
 }
 
 function showWaitForGameToStart() {
-  document.querySelector('#waiting-overlay').style.display = "";
+  document.querySelector("#waiting-overlay").style.display = "";
 }
 
 function hideWaitForGameToStart() {
-  document.querySelector('#waiting-overlay').style.display = "none";
+  document.querySelector("#waiting-overlay").style.display = "none";
 }
 
 function renderHand() {
@@ -115,7 +122,7 @@ function getSelectedCards() {
 }
 
 function showCardsInPopup(cards) {
-  const message = cards.length > 1 ? 'Cards drawn:' : 'Card drawn:';
+  const message = cards.length > 1 ? "Cards drawn:" : "Card drawn:";
   document.dispatchEvent(
     new CustomEvent("show-cards", {
       detail: { message: message, cards: cards },
@@ -126,29 +133,41 @@ function showCardsInPopup(cards) {
 async function drawACard() {
   const response = await fetchJson(`/draw/${getPlayerName()}/${getGameId()}`);
   if (response.error) {
-    return
+    return;
   }
 
   hand = response.cards;
   renderHand();
-  showCardsInPopup(response.new)
+  showCardsInPopup(response.new);
 }
 
 async function discardCard() {
   const cards = getSelectedCards();
 
   if (cards.length === 0) {
-    showError("Please select a card to discard")
+    showError("Please select a card to discard");
+    return
   }
 
   if (cards.length > 1) {
-    showError("You can only discard a single card")
-  }
-
-  const response = await fetchJson(`/discard/${getPlayerName()}/${getGameId()}`);
-  if (response.error) {
+    showError("You can only discard a single card");
     return
   }
+
+  const payload = {
+    card: cards[0]
+  };
+
+  const response = await fetchJson(
+    `/discard/${getPlayerName()}/${getGameId()}`,
+    { method: "POST", body: JSON.stringify(payload), headers: {"Content-Type": "application/json"} }
+  );
+  if (response.error) {
+    return;
+  }
+
+  hand = response;
+  renderHand();
 }
 
 const drawButton = document.querySelector("#draw");
@@ -156,6 +175,5 @@ drawButton.addEventListener("click", async () => drawACard());
 
 const discardButton = document.querySelector("#discard");
 discardButton.addEventListener("click", async () => discardCard());
-
 
 begin();
