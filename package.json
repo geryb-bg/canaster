@@ -5,7 +5,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node --experimental-modules index.js"
+    "start": "nodemon --experimental-modules index.js"
   },
   "author": "",
   "license": "ISC",
