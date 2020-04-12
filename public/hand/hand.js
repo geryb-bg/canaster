@@ -68,9 +68,8 @@ async function fetchHand() {
   const response = await fetchJson(`/cards/${playerId}/${gameId}`);
 
   if (response.waiting) {
-    console.log('');
     showWaitForGameToStart();
-    setTimeout(fetchHand, 1000)
+    setTimeout(fetchHand, 4000)
   } else {
     hideWaitForGameToStart();
     hand = response;
