@@ -2,11 +2,12 @@ const template = (props) => `
     <style>
       :host {
           display: block;
+
       }
       .card {
+        box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        box-sizing: border-box;
         background-color: white;
         color: ${props.colour};
         width: 100px;
@@ -17,6 +18,12 @@ const template = (props) => `
         
         margin-top: -100px;
         margin-left: -50px;
+        
+        ${props.selected &&
+          `
+          border: 3px solid #2fdced;
+          background-color: aliceblue;
+        `}
 
       }
     </style>
@@ -26,32 +33,57 @@ const template = (props) => `
         <div>${props.icon}</div>
     </div>`;
 
-customElements.define('game-card', class GameCard extends HTMLElement {
-  static get observedAttributes() {
-    return ['colour', 'value', 'icon', 'suite'];
-  }
+customElements.define(
+  "game-card",
+  class GameCard extends HTMLElement {
+    static get observedAttributes() {
+      return ["colour", "value", "icon", "suite"];
+    }
 
-  constructor() {
-    super();
-    this.shadow = this.attachShadow({ mode: 'open' });
-  }
+    constructor() {
+      super();
+      this.shadow = this.attachShadow({ mode: "open" });
+      this.selected = false;
+    }
 
-  render() {
-    //this.innerHTML = template(this) // style affects whole page
-    this.shadow.innerHTML = template(this)
-  }
+    render() {
+      //this.innerHTML = template(this) // style affects whole page
+      this.shadow.innerHTML = template(this);
 
-  connectedCallback() {
-    this.render()
-  }
+      this.onclick = () => {
+        this.toggleSelected();
+      };
+    }
 
-  attributeChangedCallback(attr, oldValue, newValue) {
-    console.log(attr, newValue)
-    this[attr] = newValue
-    if (newValue) this.render()
-  }
+    connectedCallback() {
+      this.render();
+    }
 
-  disconnectedCallback() {
-  }
-})
+    getCard() {
+      return {
+        colour: this.colour,
+        value: this.value,
+        icon: this.icon,
+        suite: this.suite
+      }
+    }
 
+    toggleSelected() {
+      this.selected = !this.selected;
+      if (this.selected) {
+        this.setAttribute('selected', '');
+      } else {
+        this.removeAttribute('selected')
+      }
+      this.render();
+    }
+
+    attributeChangedCallback(attr, oldValue, newValue) {
+      console.log(attr, newValue);
+      this[attr] = newValue;
+      if (newValue) this.render();
+    }
+
+    disconnectedCallback() {}
+  }
+);
