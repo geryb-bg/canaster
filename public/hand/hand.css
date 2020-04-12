@@ -2,3 +2,10 @@
     background-color: #2c7e39;
     height: 100%;
 }
+
+#card-row {
+    margin-left: 60px;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
