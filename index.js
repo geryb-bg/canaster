@@ -47,7 +47,7 @@ app.get('/cards/:playerName/:gameId', (req, res) => {
     { value: 'Q', icon: '♠️', colour: 'black', suite: 'spades' },
     { value: 'K', icon: '♠️', colour: 'black', suite: 'spades' },
     { value: 'A', icon: '♠️', colour: 'black', suite: 'spades' },
-    { value: 'Joker', icon: '🃏', colour: 'black', suite: 'none' },
+    { value: 'Joker', icon: '🎭', colour: 'black', suite: 'none' },
   ];
   res.send(cards);
 });

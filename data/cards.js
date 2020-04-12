@@ -52,8 +52,8 @@ export const cards = {
     { value: 'Q', icon: '♠️', colour: 'black', suite: 'spades' },
     { value: 'K', icon: '♠️', colour: 'black', suite: 'spades' },
     { value: 'A', icon: '♠️', colour: 'black', suite: 'spades' },
-    { value: 'Joker', icon: '🃏', colour: 'red', suite: 'none' },
-    { value: 'Joker', icon: '🃏', colour: 'black', suite: 'none' },
+    { value: 'Joker', icon: '🎭', colour: 'red', suite: 'none' },
+    { value: 'Joker', icon: '🎭', colour: 'black', suite: 'none' },
   ],
   specialCards: ['2', '3', 'Joker'],
 };
