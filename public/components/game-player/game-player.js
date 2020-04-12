@@ -1,3 +1,6 @@
+import '../card-collection/card-collection.js';
+import '../game-card/game-card.js';
+
 const template = (props) => `
     <style>
       :host {
@@ -6,21 +9,23 @@ const template = (props) => `
       }
       .player {
         flex: 1 1 auto;
-        width: 400px;
+        width: 500px;
       }
       
     </style>
 
     <div class="player">
-      <h2>${props.name}</h2>
-      <h3>${props.myturn}</h3>
+      <h2>${props.name} ${props.turn ? '⭐️' : ''}</h2>
+      <card-collection>
+        ${props.redThrees.map((three) => `<game-card colour="${three.colour}" value="${three.value}" icon="${three.icon}" suite="${three.suite}"></game-card>`)}
+      </card-collection>
     </div>`;
 
 customElements.define(
   'game-player',
   class GamePlayer extends HTMLElement {
     static get observedAttributes() {
-      return ['name', 'myturn'];
+      return ['name', 'turn'];
     }
 
     constructor() {
@@ -39,11 +44,13 @@ customElements.define(
     getPlayer() {
       return {
         name: this.name,
-        myturn: this.myturn,
+        turn: this.turn,
+        redThrees: this.redThrees,
       };
     }
 
     attributeChangedCallback(attr, oldValue, newValue) {
+      console.log(newValue);
       this[attr] = newValue;
       if (newValue) this.render();
     }

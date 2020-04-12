@@ -40,7 +40,10 @@ function loadGameDetails() {
   for (let player of game.players) {
     const playerElement = document.createElement('game-player');
     playerElement.setAttribute('name', player.name);
-    playerElement.setAttribute('myturn', player.myTurn);
+    if (player.myTurn) {
+      playerElement.setAttribute('turn', player.myTurn);
+    }
+    playerElement.redThrees = player.redThrees;
     playersContainer.appendChild(playerElement);
   }
 }
