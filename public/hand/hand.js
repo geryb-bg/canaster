@@ -5,7 +5,7 @@ import "../components/card-collection/card-collection.js";
 import "../components/error-message/error-message.js";
 import "../components/card-dialog/card-dialog.js";
 
-import {fetchJson, getGameId, getPlayerName, setPlayerAndGameInUrl, clearNode} from '../common.js'
+import {fetchJson, getGameId, getPlayerName, setPlayerAndGameInUrl, clearNode, showError} from '../common.js'
 
 let hand = [];
 
@@ -123,8 +123,7 @@ function showCardsInPopup(cards) {
   );
 }
 
-const drawButton = document.querySelector("#draw");
-drawButton.addEventListener("click", async () => {
+async function drawACard() {
   const response = await fetchJson(`/draw/${getPlayerName()}/${getGameId()}`);
   if (response.error) {
     return
@@ -133,15 +132,30 @@ drawButton.addEventListener("click", async () => {
   hand = response.cards;
   renderHand();
   showCardsInPopup(response.new)
-});
+}
 
-const discardButton = document.querySelector("#discard");
-discardButton.addEventListener("click", async () => {
+async function discardCard() {
+  const cards = getSelectedCards();
+
+  if (cards.length === 0) {
+    showError("Please select a card to discard")
+  }
+
+  if (cards.length > 1) {
+    showError("You can only discard a single card")
+  }
+
   const response = await fetchJson(`/discard/${getPlayerName()}/${getGameId()}`);
   if (response.error) {
     return
   }
+}
 
-});
+const drawButton = document.querySelector("#draw");
+drawButton.addEventListener("click", async () => drawACard());
+
+const discardButton = document.querySelector("#discard");
+discardButton.addEventListener("click", async () => discardCard());
+
 
 begin();

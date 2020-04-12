@@ -41,3 +41,11 @@ export function clearNode(node) {
     node.removeChild(node.lastElementChild);
   }
 }
+
+export function showError(msg) {
+  document.dispatchEvent(
+    new CustomEvent("show-message", {
+      detail: { message: msg },
+    })
+  );
+}
