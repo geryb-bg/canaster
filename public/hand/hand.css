@@ -49,15 +49,6 @@
     align-self: center;
 }
 
-#card-row {
-    margin-left: 50px;
-    margin-top: 100px;
-    padding: 10px;
-    display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
-}
-
 #buttons {
     display: flex;
     flex-direction: row;

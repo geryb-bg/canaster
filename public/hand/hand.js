@@ -1,6 +1,7 @@
 import "../components/game-card/game-card.js";
 import "../components/game-dialog/game-dialog.js";
 import "../components/game-button/game-button.js";
+import "../components/card-collection/card-collection.js";
 
 import {fetchJson, getGameId, getPlayerName} from '../common.js'
 
@@ -120,18 +121,21 @@ const drawButton = document.querySelector("#draw");
 drawButton.addEventListener("click", async () => {
   const response = await fetchJson(`/draw/${getPlayerName()}/${getGameId()}`);
   if (response.error) {
-
+    return
   }
 
-  console.log(getSelectedCards());
+  //todo show which cards were drawn
+  hand = response.cards;
+  renderHand()
 });
 
 const discardButton = document.querySelector("#discard");
 discardButton.addEventListener("click", async () => {
   const response = await fetchJson(`/discard/${getPlayerName()}/${getGameId()}`);
+  if (response.error) {
+    return
+  }
 
-
-  console.log(getSelectedCards());
 });
 
 begin();
