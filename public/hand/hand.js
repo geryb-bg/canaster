@@ -4,7 +4,7 @@ import "../components/game-button/game-button.js";
 
 let hand = [];
 
-function onLoad() {
+function begin() {
   if (getPlayerName() && getGameId()) {
     fetchHand().then(() => {
       renderHand();
@@ -55,10 +55,10 @@ async function addNewPlayer() {
   const response = await fetchJson(`/player/${playerName}/${gameId}`, {
     method: "POST",
   });
-  if (!response.error && response.msg === "Added") {
+  if (!response.error && response.msg === "Player joined") {
     hideAddNewPlayer();
     setPlayerAndGameInUrl(playerName, gameId);
-    onLoad();
+    begin();
   }
 }
 
@@ -157,4 +157,4 @@ drawButton.addEventListener("click", () => {
   console.log(getSelectedCards());
 });
 
-onLoad();
+begin();
