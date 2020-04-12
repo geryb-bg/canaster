@@ -52,18 +52,10 @@ async function addNewPlayer() {
     return;
   }
 
-  const res = await fetch(
-    `/player/${playerName}/${gameId}`,
-    { method: "POST" }
-  );
-  const response = await res.json();
-  if (response.error) {
-    document.dispatchEvent(
-      new CustomEvent("show-message", {
-        detail: { message: response.error },
-      })
-    );
-  } else if (response.msg === "Added") {
+  const response = await fetchJson(`/player/${playerName}/${gameId}`, {
+    method: "POST",
+  });
+  if (!response.error && response.msg === "Added") {
     hideAddNewPlayer();
     setPlayerAndGameInUrl(playerName, gameId);
     onLoad();
@@ -73,7 +65,23 @@ async function addNewPlayer() {
 async function fetchHand() {
   let playerId = getPlayerName();
   let gameId = getGameId();
-  hand = await (await fetch(`/cards/${gameId}/${playerId}`)).json();
+  const response = await fetchJson(`/cards/${playerId}/${gameId}`);
+
+  if (response.waiting) {
+    showWaitForGameToStart();
+    setTimeout(fetchHand, 4000)
+  } else {
+    hideWaitForGameToStart();
+    hand = response;
+  }
+}
+
+function showWaitForGameToStart() {
+  document.querySelector('#waiting-overlay').style.display = "";
+}
+
+function hideWaitForGameToStart() {
+  document.querySelector('#waiting-overlay').style.display = "none";
 }
 
 function clearNode(node) {
@@ -113,7 +121,7 @@ function getUrlHashParams() {
 }
 
 function setPlayerAndGameInUrl(playerName, gameId) {
-  window.location.hash = `player_name=${playerName}&game_id=${gameId}`
+  window.location.hash = `player_name=${playerName}&game_id=${gameId}`;
 }
 
 function getPlayerName() {
@@ -122,6 +130,26 @@ function getPlayerName() {
 
 function getGameId() {
   return getUrlHashParams().get("game_id");
+}
+
+async function fetchJson(url, options = {}) {
+  try {
+    const response = await (await fetch(url, options)).json();
+    if (response.error) {
+      document.dispatchEvent(
+        new CustomEvent("show-message", {
+          detail: { message: response.error },
+        })
+      );
+    }
+    return response;
+  } catch (e) {
+    document.dispatchEvent(
+      new CustomEvent("show-message", {
+        detail: { message: e.message },
+      })
+    );
+  }
 }
 
 const drawButton = document.querySelector("#draw");
