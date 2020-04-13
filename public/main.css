@@ -26,8 +26,47 @@
   align-self: center;
 }
 
-#players {
+#start-game {
+  height: 50px;
+  margin: 0 200px;
+  align-self: center;
+}
+
+#players-top {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+}
+
+#players-bot {
+  display: flex;
+  flex-direction: row-reverse;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.game-details {
+  display: flex;
+  flex-direction: row;
+  height: 180px;
+}
+
+.game-details > * {
+  flex: 1 1 auto;
+}
+
+.game-name {
+  display: flex;
+  justify-content: flex-end;
+  padding: 0 15px 0;
+  align-items: center;
+  max-width: 300px;
+  flex-direction: column;
+}
+
+#discard-pile,
+#draw-pile {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
 }

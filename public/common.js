@@ -1,3 +1,5 @@
+import '../components/error-message/error-message.js';
+
 export async function fetchJson(url, options = {}) {
   try {
     const response = await (await fetch(url, options)).json();
@@ -48,7 +50,7 @@ export function clearNode(node) {
 
 export function showError(msg) {
   document.dispatchEvent(
-    new CustomEvent("show-message", {
+    new CustomEvent('show-message', {
       detail: { message: msg },
     })
   );

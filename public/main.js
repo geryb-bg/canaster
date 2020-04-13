@@ -32,12 +32,65 @@ async function getGameState(gameId) {
 function loadGameDetails() {
   const gameName = document.querySelector('#game-name');
   gameName.innerText = game.gameId;
+  const gameDetails = document.querySelector('#game-details');
+  const startGameButton = document.querySelector('#start-game');
 
-  const playersContainer = document.querySelector('#players');
+  const drawPile = document.querySelector('#draw-pile');
+  clearNode(drawPile);
+  const discardPile = document.querySelector('#discard-pile');
+  clearNode(discardPile);
 
+  if (game.started) {
+    gameDetails.innerText = `Round: ${game.round}`;
+    startGameButton.style.display = 'none';
+
+    const drawPileCard = document.createElement('game-card');
+    drawPileCard.stacked = true;
+    drawPileCard.upsideDown = true;
+    drawPile.appendChild(drawPileCard);
+
+    let topCard;
+    if (game.discardPile.length) {
+      topCard = game.discardPile[game.discardPile.length - 1];
+    } else {
+      topCard = game.blackThree;
+    }
+
+    const cardElement = document.createElement('game-card');
+    cardElement.setAttribute('colour', topCard.colour);
+    cardElement.setAttribute('value', topCard.value);
+    cardElement.setAttribute('icon', topCard.icon);
+    cardElement.setAttribute('suite', topCard.suite);
+    cardElement.stacked = true;
+    discardPile.appendChild(cardElement);
+  } else {
+    gameDetails.innerText = `Waiting to start`;
+    startGameButton.style.display = '';
+    startGameButton.addEventListener('click', () => {
+      startGame();
+    });
+  }
+
+  addPlayers('players-top', 0, Math.floor(game.players.length / 2));
+  addPlayers('players-bot', Math.floor(game.players.length / 2), game.players.length);
+}
+
+async function startGame() {
+  const response = await fetchJson(`/game/${game.gameId}`, {
+    method: 'PUT',
+  });
+  if (!response.error) {
+    game = response;
+    loadGameDetails();
+  }
+}
+
+function addPlayers(container, start, end) {
+  const playersContainer = document.querySelector(`#${container}`);
   clearNode(playersContainer);
 
-  for (let player of game.players) {
+  for (let i = start; i < end; i++) {
+    const player = game.players[i];
     const playerElement = document.createElement('game-player');
     playerElement.setAttribute('name', player.name);
     if (player.myTurn) {

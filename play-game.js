@@ -85,6 +85,8 @@ export const playerDiscard = (playerName, gameId, card) => {
 
   if (card.value === '3' && card.colour === 'black') {
     game.discardPile = [];
+    game.blackThree.icon = card.icon;
+    game.blackThree.suite = card.suite;
   }
 
   player.myTurn = false;

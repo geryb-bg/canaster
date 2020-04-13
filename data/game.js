@@ -410,5 +410,12 @@ export const games = [
       },
     ],
     round: 1,
+    blackThree: {
+      value: '3',
+      icon: '♣️',
+      colour: 'black',
+      suite: 'clubs',
+      sortOrder: 2,
+    },
   },
 ];

@@ -10,8 +10,17 @@
   </head>
   <body>
     <div id="content">
-      <h1 id="game-name"></h1>
-      <div id="players"></div>
+      <div id="players-top"></div>
+      <div class="game-details">
+        <div class="game-name">
+          <h2 id="game-name"></h2>
+          <h3 id="game-details"></h3>
+        </div>
+        <div id="draw-pile"></div>
+        <div id="discard-pile"></div>
+        <game-button id="start-game" style="display: none;">Start game</game-button>
+      </div>
+      <div id="players-bot"></div>
     </div>
 
     <div id="new-game" style="display: none;">

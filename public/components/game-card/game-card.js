@@ -8,34 +8,51 @@ const template = (props) => `
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
-        background-color: white;
+        background-color: ${props.upsideDown ? `lightblue;` : `white;`}
         color: ${props.colour};
         width: 100px;
         height: 150px;
         border-radius: 5px;
-        box-shadow: 2px 2px 10px 0px rgba(0,0,0,0.75);
+        ${
+          props.stacked
+            ? `border: 1px solid black;
+           box-shadow: 2px 2px ${props.upsideDown ? `lightblue` : `white`},
+                       3px 3px black,
+                       5px 5px ${props.upsideDown ? `lightblue` : `white`},
+                       6px 6px black;`
+            : `box-shadow: 2px 2px 10px 0px rgba(0,0,0,0.75);`
+        }
         padding: 0.5em;
         justify-content: space-between;
         
         margin-top: -100px;
         margin-left: -50px;
         
-        ${props.selected &&
+        ${
+          props.selected &&
           `
           border: 3px solid #2fdced;
           background-color: aliceblue;
-        `}
+        `
+        }
 
       }
-      
+
+      #top-left {
+        align-self: flex-start;
+      }
+
       #bottom-right {
         align-self: flex-end;
-        text-align: center;
       }
       
     </style>
 
     <div class="card">
+      ${
+        props.upsideDown
+          ? `<h4>Awesome Friends Canaster Online ♥️♠️♦️♣️</h4>`
+          : `
         <div id="top-left">
             <div>${props.value}</div>
             <div>${props.icon}</div>
@@ -43,22 +60,25 @@ const template = (props) => `
         <div id="bottom-right">
             <div>${props.icon}</div>
             <div>${props.value}</div>
-        </div>
+        </div>`
+      }
         
     </div>`;
 
 customElements.define(
-  "game-card",
+  'game-card',
   class GameCard extends HTMLElement {
     static get observedAttributes() {
-      return ["colour", "value", "icon", "suite"];
+      return ['colour', 'value', 'icon', 'suite'];
     }
 
     constructor() {
       super();
-      this.shadow = this.attachShadow({ mode: "open" });
+      this.shadow = this.attachShadow({ mode: 'open' });
       this.selected = false;
       this.selectable = false;
+      this.stacked = false;
+      this.upsideDown = false;
     }
 
     render() {
@@ -81,8 +101,8 @@ customElements.define(
         colour: this.colour,
         value: this.value,
         icon: this.icon,
-        suite: this.suite
-      }
+        suite: this.suite,
+      };
     }
 
     toggleSelected() {
@@ -90,7 +110,7 @@ customElements.define(
       if (this.selected) {
         this.setAttribute('selected', '');
       } else {
-        this.removeAttribute('selected')
+        this.removeAttribute('selected');
       }
       this.render();
     }

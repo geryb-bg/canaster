@@ -13,6 +13,13 @@ export const createGame = () => {
     drawPile: [],
     discardPile: [],
     round: 0,
+    blackThree: {
+      value: '3',
+      icon: '♣️',
+      colour: 'black',
+      suite: 'clubs',
+      sortOrder: 2,
+    },
   };
   games.push(gameState);
   return gameState;
@@ -113,23 +120,25 @@ const dealCards = (game) => {
       }
     }
   }
-  drawPileTurnOver(game.drawPile, game.discardPile, drawCard(game.drawPile), true);
-  drawPileTurnOver(game.drawPile, game.discardPile, drawCard(game.drawPile), true);
-  drawPileTurnOver(game.drawPile, game.discardPile, drawCard(game.drawPile), true);
-  drawPileTurnOver(game.drawPile, game.discardPile, drawCard(game.drawPile), false);
+  drawPileTurnOver(game, drawCard(game.drawPile), true);
+  drawPileTurnOver(game, drawCard(game.drawPile), true);
+  drawPileTurnOver(game, drawCard(game.drawPile), true);
+  drawPileTurnOver(game, drawCard(game.drawPile), false);
 };
 
-const drawPileTurnOver = (drawPile, discardPile, card, upsideDown) => {
-  discardPile.push(card);
+const drawPileTurnOver = (game, card, upsideDown) => {
+  game.discardPile.push(card);
 
   if (upsideDown) return;
 
   const isSpecialCard = cards.specialCards.find((c) => c === card.value);
   if (isSpecialCard) {
     if (card.value === '3' && card.colour === 'black') {
-      discardPile = [];
+      game.discardPile = [];
+      game.blackThree.icon = card.icon;
+      game.blackThree.suite = card.suite;
     } else {
-      drawPileTurnOver(drawPile, discardPile, drawCard(drawPile), false);
+      drawPileTurnOver(game.drawPile, game.discardPile, drawCard(game.drawPile), false);
     }
   }
 };

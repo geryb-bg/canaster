@@ -4,17 +4,13 @@ import '../game-card/game-card.js';
 const template = (props) => `
     <style>
       :host {
-          display: block;
-
-      }
-      .player {
         flex: 1 1 auto;
-        width: 500px;
+        min-width: 200px;
       }
       
     </style>
 
-    <div class="player">
+    <div>
       <h2>${props.name} ${props.turn ? '⭐️' : ''}</h2>
       <card-collection>
         ${props.redThrees.map((three) => `<game-card colour="${three.colour}" value="${three.value}" icon="${three.icon}" suite="${three.suite}"></game-card>`)}
@@ -31,6 +27,7 @@ customElements.define(
     constructor() {
       super();
       this.shadow = this.attachShadow({ mode: 'open' });
+      this.redThrees = [];
     }
 
     render() {
