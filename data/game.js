@@ -77,7 +77,7 @@ export const games = [
             sortOrder: 8,
           },
         ],
-        meld: [],
+        meld: {},
         points: 0,
         redThrees: [
           {
@@ -173,11 +173,11 @@ export const games = [
             sortOrder: 1,
           },
         ],
-        meld: [],
+        meld: {},
         points: 0,
         redThrees: [],
         myTurn: true,
-        hasDrawn: false,
+        hasDrawn: true,
         extraFirstTurn: 0,
       },
     ],

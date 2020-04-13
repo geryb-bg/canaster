@@ -56,7 +56,7 @@ export const playerJoins = (playerName, gameId) => {
   const player = {
     name: playerName,
     cards: [],
-    meld: [],
+    meld: {},
     points: 0,
     redThrees: [],
     myTurn: false,
@@ -93,7 +93,7 @@ const clearGameBoard = (game) => {
   game.discardPile = [];
   for (let player of game.players) {
     player.cards = [];
-    player.meld = [];
+    player.meld = {};
     player.redThrees = [];
     player.myTurn = false;
     player.hasDrawn = false;

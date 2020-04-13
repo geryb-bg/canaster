@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import { createGame, playerJoins, startGame } from './create-game.js';
 import { games } from './data/game.js';
-import { playerCards, playerDraw, playerDiscard } from './play-game.js';
+import { playerCards, playerDraw, playerDiscard, meldCards } from './play-game.js';
 
 const app = express();
 const port = 3000;
@@ -53,6 +53,15 @@ app.get('/draw/:playerName/:gameId', (req, res) => {
 app.post('/discard/:playerName/:gameId', (req, res) => {
   const result = playerDiscard(req.params.playerName, req.params.gameId, req.body.card);
   res.send(result);
+});
+
+app.post('/meld/:playerName/:gameId', (req, res) => {
+  const result = meldCards(req.params.playerName, req.params.gameId, req.body.cards);
+  res.send(result);
+});
+
+app.post('/melddiscard/:playerName/:gameId', (req, res) => {
+  res.send('wait');
 });
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
