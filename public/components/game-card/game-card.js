@@ -24,9 +24,6 @@ const template = (props) => `
         padding: 0.5em;
         justify-content: space-between;
         
-        margin-top: -100px;
-        margin-left: -50px;
-        
         ${
           props.selected &&
           `

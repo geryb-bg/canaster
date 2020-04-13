@@ -9,6 +9,11 @@ const template = (props) => `
         flex-wrap: wrap;
       }
       
+      ::slotted(game-card) {
+        margin-top: -100px;
+        margin-left: -50px;
+      }
+      
     </style>
 
     <slot></slot>`;
