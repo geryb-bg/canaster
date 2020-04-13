@@ -91,6 +91,7 @@ export const games = [
         myTurn: false,
         hasDrawn: false,
         extraFirstTurn: 1,
+        canaster: [],
       },
       {
         name: 'Gery',
@@ -179,6 +180,7 @@ export const games = [
         myTurn: true,
         hasDrawn: true,
         extraFirstTurn: 0,
+        canaster: [],
       },
     ],
     drawPile: [

@@ -153,6 +153,7 @@ export const meldCards = (playerName, gameId, meldedCards) => {
     return { error: 'You have submitted one or more cards that can not be melded' };
   }
 
+  const canasters = [];
   if (Object.keys(player.meld).length) {
     for (let meldKey of Object.keys(newMeld)) {
       const meld = newMeld[meldKey];
@@ -167,6 +168,10 @@ export const meldCards = (playerName, gameId, meldedCards) => {
         }
 
         player.meld[meldKey] = combinedMeld;
+
+        if (combinedMeld.length >= 8) {
+          canasters.push({ value: meldKey, colour: numJokers ? 'black' : 'red' });
+        }
       } else {
         const errorMessage = isValidMeld(meld, meldKey);
         if (errorMessage) {
@@ -174,6 +179,11 @@ export const meldCards = (playerName, gameId, meldedCards) => {
         }
 
         player.meld[meldKey] = meld;
+
+        if (meld.length >= 8) {
+          const numJokers = meld.filter((c) => c.value === 'Joker' || c.value === '2').length;
+          canasters.push({ value: meldKey, colour: numJokers ? 'black' : 'red' });
+        }
       }
     }
   } else {
@@ -194,6 +204,10 @@ export const meldCards = (playerName, gameId, meldedCards) => {
       totalScore += rules.cardPoints['2'] * twos.length;
       //remainder
       totalScore += rules.cardPoints[meldKey] * (meld.length - numJokers);
+
+      if (meld.length >= 8) {
+        canasters.push({ value: meldKey, colour: numJokers ? 'black' : 'red' });
+      }
     }
 
     const requiredMeldPoints = rules.meldPoints.find((p) => p.moreThan <= player.points && p.lessThan > player.points);
@@ -209,6 +223,8 @@ export const meldCards = (playerName, gameId, meldedCards) => {
     const indexOfDiscarded = player.cards.indexOf(playerCard);
     player.cards.splice(indexOfDiscarded, 1);
   }
+
+  player.canaster = canasters;
 
   return player.cards;
 };

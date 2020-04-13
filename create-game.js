@@ -62,6 +62,7 @@ export const playerJoins = (playerName, gameId) => {
     myTurn: false,
     hasDrawn: false,
     extraFirstTurn: 0,
+    canaster: [],
   };
   game.players.push(player);
   return { msg: 'Player joined' };
