@@ -25,7 +25,7 @@ async function getGameState(gameId) {
     game = response;
     loadGameDetails();
 
-    //setTimeout(() => getGameState(gameId), 5000);
+    //TODO: setTimeout(() => getGameState(gameId), 5000);
   }
 }
 
@@ -93,10 +93,12 @@ function addPlayers(container, start, end) {
     const player = game.players[i];
     const playerElement = document.createElement('game-player');
     playerElement.setAttribute('name', player.name);
+    playerElement.setAttribute('points', player.points);
     if (player.myTurn) {
       playerElement.setAttribute('turn', player.myTurn);
     }
     playerElement.redThrees = player.redThrees;
+    //TODO: add melds
     playersContainer.appendChild(playerElement);
   }
 }
