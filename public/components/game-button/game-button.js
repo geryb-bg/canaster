@@ -10,7 +10,15 @@ const template = (props) => `
         justify-content: center;
         align-items: center;
         cursor: pointer;
+        text-align: center;
+        user-select: none;
       }
+      
+      :host(:active){
+        background-color: #008100;
+       }
+      
+      
     </style>
     <slot></slot>
 `;

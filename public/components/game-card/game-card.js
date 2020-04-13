@@ -4,6 +4,7 @@ const template = (props) => `
           display: block;
       }
       .card {
+        user-select: none;
         box-sizing: border-box;
         display: flex;
         flex-direction: column;
@@ -46,6 +47,7 @@ const template = (props) => `
         display: flex;
         flex-direction: row;
         flex-wrap: wrap;
+        max-width: 276px;
       }
       
       .acting-as {
@@ -73,7 +75,7 @@ const template = (props) => `
         
     </div>
     <game-dialog style="display: none">
-        <div>What card will your ${props.value} be acting as:</div>
+        <div>What card will your ${props.value} be acting as?</div>
         <br>
         <div id="joker-selection">
             <game-button class="joker-button">4</game-button>

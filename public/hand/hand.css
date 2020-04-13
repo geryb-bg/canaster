@@ -56,16 +56,10 @@
     justify-content: center;
 }
 
-#buttons button {
-    color: white;
-    border: 1px solid black;
-    background-color: #005500;
-    width: 90px;
-    height: 50px;
-}
 
-#buttons button:hover {
-    background-color: rgba(44, 126, 57, 0.5);
+#buttons game-button {
+    width: 120px;
+    height: 50px;
 }
 
 #card-row {
