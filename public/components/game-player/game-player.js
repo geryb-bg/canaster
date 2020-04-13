@@ -12,6 +12,7 @@ const template = (props) => `
 
     <div>
       <h2>${props.name} ${props.turn ? '⭐️' : ''}</h2>
+      <h3>Points: ${props.points}</h3>
       <card-collection>
         ${props.redThrees.map((three) => `<game-card colour="${three.colour}" value="${three.value}" icon="${three.icon}" suite="${three.suite}"></game-card>`)}
       </card-collection>
@@ -21,7 +22,7 @@ customElements.define(
   'game-player',
   class GamePlayer extends HTMLElement {
     static get observedAttributes() {
-      return ['name', 'turn'];
+      return ['name', 'turn', 'points'];
     }
 
     constructor() {
@@ -43,6 +44,7 @@ customElements.define(
         name: this.name,
         turn: this.turn,
         redThrees: this.redThrees,
+        points: this.points,
       };
     }
 

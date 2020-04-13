@@ -6,6 +6,15 @@
   flex-direction: column;
   position: absolute;
   text-align: center;
+  flex-direction: column;
+}
+
+#content > .players {
+  flex: 1 1 auto;
+}
+
+#content > .game-details {
+  flex: 0 0 auto;
 }
 
 #new-game {
@@ -57,7 +66,7 @@
 
 .game-name {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   padding: 0 15px 0;
   align-items: center;
   max-width: 300px;
@@ -68,5 +77,6 @@
 #draw-pile {
   display: flex;
   justify-content: center;
-  align-items: flex-end;
+  align-items: center;
+  margin-top: 100px;
 }
