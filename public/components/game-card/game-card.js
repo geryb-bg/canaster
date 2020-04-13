@@ -2,7 +2,6 @@ const template = (props) => `
     <style>
       :host {
           display: block;
-
       }
       .card {
         box-sizing: border-box;
@@ -46,6 +45,18 @@ const template = (props) => `
         align-self: flex-end;
       }
       
+      #joker-selection {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+      }
+      
+      .acting-as {
+        font-size: 0.8em;
+        color: gray;
+        vertical-align: super;
+      }
+      
     </style>
 
     <div class="card">
@@ -54,7 +65,7 @@ const template = (props) => `
           ? `<h4>Awesome Friends Canaster Online ♥️♠️♦️♣️</h4>`
           : `
         <div id="top-left">
-            <div>${props.value}</div>
+            <div>${props.actingAs ? `<span class="acting-as">${props.actingAs}</span>` : ''} ${props.value}</div>
             <div>${props.icon}</div>
         </div>
         <div id="bottom-right">
@@ -63,7 +74,25 @@ const template = (props) => `
         </div>`
       }
         
-    </div>`;
+    </div>
+    <game-dialog style="display: none">
+        <div>What card will your ${props.value} be acting as:</div>
+        <br>
+        <div id="joker-selection">
+            <game-button class="joker-button">4</game-button>
+            <game-button class="joker-button">5</game-button>
+            <game-button class="joker-button">6</game-button>
+            <game-button class="joker-button">7</game-button>
+            <game-button class="joker-button">8</game-button>
+            <game-button class="joker-button">9</game-button>
+            <game-button class="joker-button">10</game-button>
+            <game-button class="joker-button">J</game-button>
+            <game-button class="joker-button">Q</game-button>
+            <game-button class="joker-button">K</game-button>
+            <game-button class="joker-button">A</game-button>
+        </div>
+    </game-dialog>
+`;
 
 customElements.define(
   'game-card',
@@ -79,17 +108,29 @@ customElements.define(
       this.selectable = false;
       this.stacked = false;
       this.upsideDown = false;
+      this.actingAs = null;
     }
 
     render() {
-      //this.innerHTML = template(this) // style affects whole page
       this.shadow.innerHTML = template(this);
+      this.dialog = this.shadow.querySelector('game-dialog');
 
-      this.onclick = () => {
+
+      this.shadow.querySelector('.card').addEventListener('click',() => {
         if (this.selectable) {
           this.toggleSelected();
         }
-      };
+      });
+
+      const jokerButtons = this.shadow.querySelectorAll('.joker-button');
+
+      jokerButtons.forEach((button) => {
+        button.addEventListener('click', () => {
+          this.actingAs = button.innerText;
+          this.closeDialog();
+        })
+      })
+
     }
 
     connectedCallback() {
@@ -97,20 +138,40 @@ customElements.define(
     }
 
     getCard() {
-      return {
+      const card = {
         colour: this.colour,
         value: this.value,
         icon: this.icon,
         suite: this.suite,
       };
+
+      if (this.actingAs) {
+        card.actingAs = this.actingAs;
+      }
+
+      return card;
     }
 
-    toggleSelected() {
+    async askForJokerValue() {
+      return new Promise((resolve) => {
+        this.closeDialog = resolve;
+        this.dialog.style.display = '';
+      })
+    }
+
+    async toggleSelected() {
+
+      if (!this.selected && (this.value === '2' || this.value === 'Joker')) {
+        await this.askForJokerValue();
+        this.dialog.style.display = 'none';
+      }
+
       this.selected = !this.selected;
       if (this.selected) {
         this.setAttribute('selected', '');
       } else {
         this.removeAttribute('selected');
+        this.actingAs = null;
       }
       this.render();
     }
