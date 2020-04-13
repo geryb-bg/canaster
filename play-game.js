@@ -147,43 +147,47 @@ export const meldCards = (playerName, gameId, meldedCards) => {
     return { error: 'Please select cards to meld.' };
   }
 
+  const invalidCards = [];
+  const newMeld = groupMeldedCards(meldedCards, invalidCards);
+  if (invalidCards.length) {
+    return { error: 'You have submitted one or more cards that can not be melded' };
+  }
+
   if (Object.keys(player.meld).length) {
-    //todo, already has melded cards
-  } else {
-    //first meld
-    const invalidCards = [];
-    const newMeld = meldedCards.reduce((group, card) => {
-      const isSpecialCard = cards.specialCards.find((c) => c === card.value);
-      if (isSpecialCard) {
-        if (card.value === '3') {
-          invalidCards.push(card);
-        } else {
-          addCardToMeld(group, card.actingAs, card);
+    for (let meldKey of Object.keys(newMeld)) {
+      const meld = newMeld[meldKey];
+      const existingMeld = player.meld[meldKey];
+
+      if (existingMeld) {
+        const combinedMeld = [...existingMeld, ...meld];
+
+        const numJokers = combinedMeld.filter((c) => c.value === 'Joker' || c.value === '2').length;
+        if (numJokers >= combinedMeld.length - numJokers) {
+          return { error: `${meldKey}s meld has too many jokers` };
         }
+
+        player.meld[meldKey] = combinedMeld;
       } else {
-        addCardToMeld(group, card.value, card);
+        const errorMessage = isValidMeld(meld, meldKey);
+        if (errorMessage) {
+          return { error: errorMessage };
+        }
+
+        player.meld[meldKey] = meld;
       }
-
-      return group;
-    }, {});
-
-    if (invalidCards.length) {
-      return { error: 'You have submitted one or more cards that can not be melded' };
     }
-
+  } else {
     let totalScore = 0;
     for (let meldKey of Object.keys(newMeld)) {
       const meld = newMeld[meldKey];
-      if (meld.length < 3) {
-        return { error: `${meldKey}s meld does not have enough cards to meld` };
+      const errorMessage = isValidMeld(meld, meldKey);
+      if (errorMessage) {
+        return { error: errorMessage };
       }
+
       const jokers = meld.filter((c) => c.value === 'Joker');
       const twos = meld.filter((c) => c.value === '2');
       const numJokers = jokers.length + twos.length;
-      if (numJokers >= meld.length - numJokers) {
-        return { error: `${meldKey}s meld has too many jokers` };
-      }
-
       //joker
       totalScore += rules.cardPoints['Joker'] * jokers.length;
       //two
@@ -197,21 +201,36 @@ export const meldCards = (playerName, gameId, meldedCards) => {
       return { error: `Your meld only has ${totalScore} points and you require ${requiredMeldPoints.required}` };
     }
 
-    //remove cards from hand
-    for (let card of meldedCards) {
-      const playerCard = player.cards.find((c) => c.value === card.value && c.suite === card.suite);
-      const indexOfDiscarded = player.cards.indexOf(playerCard);
-      if (indexOfDiscarded < 0) {
-        return { error: 'This card is not in your hand' }; // should not happen
-      }
-      player.cards.splice(indexOfDiscarded, 1);
-    }
-
     player.meld = newMeld;
   }
-  console.log(player.meld);
+
+  for (let card of meldedCards) {
+    const playerCard = player.cards.find((c) => c.value === card.value && c.suite === card.suite);
+    const indexOfDiscarded = player.cards.indexOf(playerCard);
+    player.cards.splice(indexOfDiscarded, 1);
+  }
 
   return player.cards;
+};
+
+const groupMeldedCards = (meldedCards, invalidCards) => {
+  return meldedCards.reduce((group, card) => {
+    const isSpecialCard = cards.specialCards.find((c) => c === card.value);
+    if (isSpecialCard) {
+      if (card.value === '3') {
+        invalidCards.push(card);
+      } else {
+        if (!card.actingAs) {
+          invalidCards.push(card);
+        }
+        addCardToMeld(group, card.actingAs, card);
+      }
+    } else {
+      addCardToMeld(group, card.value, card);
+    }
+
+    return group;
+  }, {});
 };
 
 const addCardToMeld = (group, key, card) => {
@@ -220,6 +239,16 @@ const addCardToMeld = (group, key, card) => {
   currentMeld = [...currentMeld, card];
 
   group[key] = currentMeld;
+};
+
+const isValidMeld = (meld, meldKey) => {
+  if (meld.length < 3) {
+    return `${meldKey}s meld does not have enough cards to meld`;
+  }
+  const numJokers = meld.filter((c) => c.value === 'Joker' || c.value === '2').length;
+  if (numJokers >= meld.length - numJokers) {
+    return `${meldKey}s meld has too many jokers`;
+  }
 };
 
 export const drawCard = (drawPile) => {
