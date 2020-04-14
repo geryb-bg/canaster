@@ -56,6 +56,7 @@ app.get('/draw/:playerName/:gameId', (req, res) => {
 });
 
 app.post('/discard/:playerName/:gameId', (req, res) => {
+  socketio.toHost(req.params.gameId).emit('show-message', req.params.playerName + ' discarded a card');
   const result = playerDiscard(req.params.playerName, req.params.gameId, req.body.card, socketio);
   res.send(result);
 });

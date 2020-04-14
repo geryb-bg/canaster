@@ -11,6 +11,22 @@ socket.on('connect', () => {
   console.log('connected to server');
 });
 
+socket.on('game-state', (gameState) => {
+  game = gameState;
+  loadGameDetails();
+});
+
+let hideMsgTimeout;
+
+socket.on('show-message', (msg) => {
+  clearTimeout(hideMsgTimeout);
+  const msgElement = document.querySelector('#show-message');
+  msgElement.innerText = msg;
+  hideMsgTimeout = setTimeout(() => {
+    msgElement.innerText = "";
+  }, 5000)
+});
+
 function begin() {
   const gameId = getGameId();
   if (gameId) {
@@ -32,11 +48,6 @@ async function getGameState(gameId) {
     loadGameDetails();
 
     socket.emit('join-game-host', game.gameId);
-
-    socket.on('game-state', (gameState) => {
-      game = gameState;
-      loadGameDetails();
-    });
   }
 }
 
