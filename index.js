@@ -71,13 +71,21 @@ app.post('/melddiscard/:playerName/:gameId', (req, res) => {
 });
 
 socketio.toHost = (gameId) => socketio.to(`${gameId}-host`);
+socketio.toPlayers = (gameId) => socketio.to(`${gameId}-players`);
 
 socketio.on('connection', (socket) => {
   console.log('a user connected');
 
-  socket.on('join-game', (room) => {
-    console.log('user joined game ' + room);
-    socket.join(room);
+  socket.on('join-game-host', (gameId) => {
+    socket.join(`${gameId}-host`);
+    console.log('host joined game ' + gameId);
+
+  });
+
+  socket.on('join-game-player', (gameId) => {
+    socket.join(`${gameId}-players`);
+    console.log('player joined game ' + gameId);
+
   });
 
   socket.on('disconnect', () => {

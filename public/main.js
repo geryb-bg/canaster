@@ -31,7 +31,7 @@ async function getGameState(gameId) {
 
     loadGameDetails();
 
-    socket.emit('join-game', `${game.gameId}-host`);
+    socket.emit('join-game-host', game.gameId);
 
     socket.on('game-state', (gameState) => {
       game = gameState;
