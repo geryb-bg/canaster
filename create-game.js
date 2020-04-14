@@ -13,6 +13,9 @@ export const createGame = () => {
     drawPile: [],
     discardPile: [],
     round: 0,
+    roundStarted: false,
+    gameOver: false,
+    winner: '',
     blackThree: {
       value: '3',
       icon: '',
@@ -73,8 +76,14 @@ export const startGame = (gameId) => {
   if (!game) {
     return { error: 'This game does not exist.' };
   }
+  if (game.gameOver) {
+    return { error: 'This game is done, you must create a new one.' };
+  }
   if (game.players.length < 2) {
     return { error: 'A game needs at least two players.' };
+  }
+  if (game.roundStarted) {
+    return { error: 'This round has already started.' };
   }
   if (game.round > 0) {
     clearGameBoard(game);
@@ -82,6 +91,7 @@ export const startGame = (gameId) => {
 
   game.started = true;
   game.round++;
+  game.roundStarted = true;
   const playersTurn = game.round % game.players.length;
   game.players[playersTurn].myTurn = true;
   assignPacks(game);

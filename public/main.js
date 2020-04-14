@@ -8,7 +8,7 @@ let game;
 let socket = io();
 
 socket.on('connect', () => {
-  console.log("connected to server")
+  console.log('connected to server');
 });
 
 function begin() {
@@ -31,7 +31,7 @@ async function getGameState(gameId) {
 
     loadGameDetails();
 
-    socket.emit('join-game', game.gameId);
+    socket.emit('join-game', `${game.gameId}-host`);
 
     socket.on('game-state', (gameState) => {
       game = gameState;

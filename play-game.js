@@ -1,6 +1,7 @@
 import { games } from './data/game.js';
 import { cards } from './data/cards.js';
 import { rules } from './data/rules.js';
+import { endRound } from './end-game.js';
 
 export const playerCards = (playerName, gameId) => {
   const { game, player, errorMessage } = getGameAndPlayer(gameId, playerName);
@@ -56,7 +57,7 @@ const drawAgain = (drawPile, player, newCards) => {
   }
 };
 
-export const playerDiscard = (playerName, gameId, card) => {
+export const playerDiscard = (playerName, gameId, card, socketio) => {
   const { game, player, errorMessage } = getGameAndPlayer(gameId, playerName);
   if (errorMessage) {
     return { error: errorMessage };
@@ -79,23 +80,36 @@ export const playerDiscard = (playerName, gameId, card) => {
   }
 
   player.cards.splice(indexOfDiscarded, 1);
-  game.discardPile.push(card);
 
-  if (card.value === '3' && card.colour === 'black') {
-    game.discardPile = [];
-    game.blackThree.icon = card.icon;
-    game.blackThree.suite = card.suite;
+  if (!player.cards.length && player.canaster.length) {
+    const overallWinner = endRound(playerName, gameId);
+
+    if (overallWinner) {
+      return { error: `Game Over! ${overallWinner} wins!` };
+    }
+
+    return { error: `Round ${game.round} over, you win` };
+  } else {
+    game.discardPile.push(card);
+
+    if (card.value === '3' && card.colour === 'black') {
+      game.discardPile = [];
+      game.blackThree.icon = card.icon;
+      game.blackThree.suite = card.suite;
+    }
+
+    player.myTurn = false;
+    player.hasDrawn = false;
+    let playersTurn = game.players.indexOf(player) + 1;
+    if (playersTurn === game.players.length) {
+      playersTurn = 0;
+    }
+    game.players[playersTurn].myTurn = true;
+
+    socketio.toHost(gameId).emit('game-state', game);
+
+    return player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
   }
-
-  player.myTurn = false;
-  player.hasDrawn = false;
-  let playersTurn = game.players.indexOf(player) + 1;
-  if (playersTurn === game.players.length) {
-    playersTurn = 0;
-  }
-  game.players[playersTurn].myTurn = true;
-
-  return player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
 };
 
 export const meldCardsWithDiscard = (playerName, gameId, meldedCards) => {
@@ -113,6 +127,10 @@ export const meldCardsWithDiscard = (playerName, gameId, meldedCards) => {
 
   if (!game.discardPile.length) {
     return { error: `Srsly??? What are you doing, that's a black 3` };
+  }
+
+  if (!player.cards.length) {
+    return { error: 'You need to have cards in your hand in order to pick up from the discard pile.' };
   }
 
   const discardCard = game.discardPile[game.discardPile.length - 1];

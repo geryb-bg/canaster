@@ -9,7 +9,7 @@ import { playerCards, playerDraw, playerDiscard, meldCards, meldCardsWithDiscard
 const app = express();
 const port = 3000;
 
-const httpServer = http.createServer(app)
+const httpServer = http.createServer(app);
 const socketio = io(httpServer);
 
 app.use(bodyParser.json());
@@ -56,7 +56,7 @@ app.get('/draw/:playerName/:gameId', (req, res) => {
 });
 
 app.post('/discard/:playerName/:gameId', (req, res) => {
-  const result = playerDiscard(req.params.playerName, req.params.gameId, req.body.card);
+  const result = playerDiscard(req.params.playerName, req.params.gameId, req.body.card, socketio);
   res.send(result);
 });
 
@@ -70,13 +70,14 @@ app.post('/melddiscard/:playerName/:gameId', (req, res) => {
   res.send(result);
 });
 
+socketio.toHost = (gameId) => socketio.to(`${gameId}-host`);
+
 socketio.on('connection', (socket) => {
   console.log('a user connected');
 
   socket.on('join-game', (room) => {
     console.log('user joined game ' + room);
-    socket.join(room)
-
+    socket.join(room);
   });
 
   socket.on('disconnect', () => {
