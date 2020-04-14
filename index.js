@@ -51,12 +51,11 @@ app.get('/cards/:playerName/:gameId', (req, res) => {
 });
 
 app.get('/draw/:playerName/:gameId', (req, res) => {
-  const result = playerDraw(req.params.playerName, req.params.gameId);
+  const result = playerDraw(req.params.playerName, req.params.gameId, socketio);
   res.send(result);
 });
 
 app.post('/discard/:playerName/:gameId', (req, res) => {
-  socketio.toHost(req.params.gameId).emit('show-message', req.params.playerName + ' discarded a card');
   const result = playerDiscard(req.params.playerName, req.params.gameId, req.body.card, socketio);
   res.send(result);
 });
@@ -80,13 +79,11 @@ socketio.on('connection', (socket) => {
   socket.on('join-game-host', (gameId) => {
     socket.join(`${gameId}-host`);
     console.log('host joined game ' + gameId);
-
   });
 
   socket.on('join-game-player', (gameId) => {
     socket.join(`${gameId}-players`);
     console.log('player joined game ' + gameId);
-
   });
 
   socket.on('disconnect', () => {

@@ -15,7 +15,7 @@ export const endRound = (playerName, gameId, socketio) => {
       player.points += rules.otherPoints.canaster[canaster.colour];
     }
     //red threes
-    if (player.meld !== {}) {
+    if (Object.keys(player.meld).length) {
       player.points += player.redThrees.length * rules.otherPoints.redThree;
     }
     //cards
@@ -35,7 +35,7 @@ export const endRound = (playerName, gameId, socketio) => {
 
     //subtractPoints
     //red threes
-    if (player.meld === {}) {
+    if (!Object.keys(player.meld).length) {
       player.points -= player.redThrees.length * rules.otherPoints.redThree;
     }
     //other cards

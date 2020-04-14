@@ -15,7 +15,7 @@ export const playerCards = (playerName, gameId) => {
   return player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
 };
 
-export const playerDraw = (playerName, gameId) => {
+export const playerDraw = (playerName, gameId, socketio) => {
   const { game, player, errorMessage } = getGameAndPlayer(gameId, playerName);
   if (errorMessage) {
     return { error: errorMessage };
@@ -25,15 +25,23 @@ export const playerDraw = (playerName, gameId) => {
   }
 
   if (!player.myTurn) {
+    socketio.toHost(gameId).emit('show-message', `${playerName} tried to draw a card, but it is not their turn.`);
     return { error: 'It is not your turn!' };
   }
   if (player.hasDrawn) {
+    socketio.toHost(gameId).emit('show-message', `${playerName} tried to draw another card.`);
     return { error: 'You have already drawn a card' };
   }
 
   const newCards = [];
   drawAgain(game.drawPile, player, newCards);
   player.hasDrawn = true;
+
+  let message = `${playerName} has drawn a card.`;
+  if (newCards.length > 1) {
+    message = `${playerName} has drawn a card and ${newCards.length - 1} card(s) for their red threes`;
+  }
+  socketio.toHost(gameId).emit('show-message', message);
 
   return {
     cards: player.cards.sort((a, b) => a.sortOrder - b.sortOrder),
@@ -67,15 +75,20 @@ export const playerDiscard = (playerName, gameId, card, socketio) => {
   }
 
   if (!player.myTurn) {
+    socketio.toHost(gameId).emit('show-message', `${playerName} tried to discard a card, but it is not their turn.`);
     return { error: 'It is not your turn!' };
   }
   if (!player.hasDrawn) {
+    socketio.toHost(gameId).emit('show-message', `${playerName} tried to discard a card before drawing one.`);
     return { error: 'You must draw a card first' };
   }
 
   const playerCard = player.cards.find((c) => c.value === card.value && c.suite === card.suite);
   const indexOfDiscarded = player.cards.indexOf(playerCard);
   if (indexOfDiscarded < 0) {
+    socketio
+      .toHost(gameId)
+      .emit('show-message', `Not sure how, but ${playerName} tried to discard a card they don't have. Could you please stop trying to cheat?`);
     return { error: 'This card is not in your hand' };
   }
 
@@ -85,9 +98,11 @@ export const playerDiscard = (playerName, gameId, card, socketio) => {
     const overallWinner = endRound(playerName, gameId, socketio);
 
     if (overallWinner) {
+      //TODO player messages here
       return { error: `Game Over! ${overallWinner} wins!` };
     }
 
+    //TODO player messages here
     return { error: `Round ${game.round} over, you win` };
   } else {
     game.discardPile.push(card);
@@ -107,6 +122,9 @@ export const playerDiscard = (playerName, gameId, card, socketio) => {
     game.players[playersTurn].myTurn = true;
 
     socketio.toHost(gameId).emit('game-state', game);
+    socketio.toHost(gameId).emit('show-message', `${playerName} discarded a card, it is now ${game.players[playersTurn].name}'s turn.`);
+
+    //TODO player message here (it's your turn)
 
     return player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
   }
@@ -122,32 +140,42 @@ export const meldCardsWithDiscard = (playerName, gameId, meldedCards, socketio) 
   }
 
   if (!player.myTurn) {
+    socketio.toHost(gameId).emit('show-message', `${playerName} tried to tried to pick up the discard pile, but it is not their turn.`);
     return { error: 'It is not your turn!' };
   }
 
+  if (player.hasDrawn) {
+    socketio.toHost(gameId).emit('show-message', `${playerName} tried to pick up the discard pile.`);
+    return { error: 'You have already drawn a card' };
+  }
+
   if (!game.discardPile.length) {
+    socketio.toHost(gameId).emit('show-message', `${playerName} tried to pick up the discard pile, but there is nothing there.`);
     return { error: `Srsly??? What are you doing, that's a black 3` };
   }
 
   if (!player.cards.length) {
+    socketio.toHost(gameId).emit('show-message', `${playerName} tried to pick up the discard pile, but is not allowed to as they have no cards in their hand.`);
     return { error: 'You need to have cards in your hand in order to pick up from the discard pile.' };
   }
 
   const discardCard = game.discardPile[game.discardPile.length - 1];
   if (discardCard.value === '2' || discardCard.value === 'Joker') {
+    socketio.toHost(gameId).emit('show-message', `We are sorry, this game can not do Joker canasters yet.`);
     return { error: 'We are sorry, this game can not do Joker canasters yet.' };
   }
   const existingMeld = player.meld[discardCard.value];
   if (!existingMeld) {
     const newMeld = meldedCards.filter((c) => c.value === discardCard.value);
     if (newMeld.length < 2) {
+      socketio.toHost(gameId).emit('show-message', `${playerName} tried to pick up the discard pile, but could not meld.`);
       return { error: 'The discard card does not fit into any of your melds.' };
     }
   }
 
   meldedCards.push(discardCard);
 
-  const result = meldEverything(player, meldedCards);
+  const result = meldEverything(player, meldedCards, gameId, socketio);
   if (result.error) return result;
 
   player.hasDrawn = true;
@@ -157,6 +185,8 @@ export const meldCardsWithDiscard = (playerName, gameId, meldedCards, socketio) 
   game.discardPile = [];
 
   socketio.toHost(gameId).emit('game-state', game);
+
+  socketio.toHost(gameId).emit('show-message', `${playerName} has melded successfully and has the discard pile.`);
 
   return player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
 };
@@ -171,25 +201,35 @@ export const meldCards = (playerName, gameId, meldedCards, socketio) => {
   }
 
   if (!player.myTurn) {
+    socketio.toHost(gameId).emit('show-message', `${playerName} tried to meld, but it is not their turn.`);
     return { error: 'It is not your turn!' };
   }
   if (!player.hasDrawn) {
+    socketio.toHost(gameId).emit('show-message', `${playerName} tried to meld, but has not picked up a card yet.`);
     return { error: 'You must draw a card first' };
   }
 
   socketio.toHost(gameId).emit('game-state', game);
 
-  return meldEverything(player, meldedCards);
+  let message = `${playerName} has melded successfully.`;
+  if (player.canaster.length) {
+    message += `They have ${player.canaster.length} canaster(s) already.`;
+  }
+  socketio.toHost(gameId).emit('show-message', message);
+
+  return meldEverything(player, meldedCards, gameId, socketio);
 };
 
-const meldEverything = (player, meldedCards) => {
+const meldEverything = (player, meldedCards, gameId, socketio) => {
   if (!meldedCards.length) {
+    socketio.toHost(gameId).emit('show-message', `${player.name} tried to meld without any cards.`);
     return { error: 'Please select cards to meld.' };
   }
 
   const invalidCards = [];
   const newMeld = groupMeldedCards(meldedCards, invalidCards);
   if (invalidCards.length) {
+    socketio.toHost(gameId).emit('show-message', `${player.name} tried to meld with invalid cards.`);
     return { error: 'You have submitted one or more cards that can not be melded' };
   }
 
@@ -204,6 +244,7 @@ const meldEverything = (player, meldedCards) => {
 
         const numJokers = combinedMeld.filter((c) => c.value === 'Joker' || c.value === '2').length;
         if (numJokers >= combinedMeld.length - numJokers) {
+          socketio.toHost(gameId).emit('show-message', `${player.name} tried to meld with too many jokers.`);
           return { error: `${meldKey}s meld has too many jokers` };
         }
 
@@ -215,6 +256,7 @@ const meldEverything = (player, meldedCards) => {
       } else {
         const errorMessage = isValidMeld(meld, meldKey);
         if (errorMessage) {
+          socketio.toHost(gameId).emit('show-message', `${player.name} tried to meld, but made a mistake.`);
           return { error: errorMessage };
         }
 
@@ -232,6 +274,7 @@ const meldEverything = (player, meldedCards) => {
       const meld = newMeld[meldKey];
       const errorMessage = isValidMeld(meld, meldKey);
       if (errorMessage) {
+        socketio.toHost(gameId).emit('show-message', `${player.name} tried to meld, but made a mistake.`);
         return { error: errorMessage };
       }
 
@@ -252,6 +295,7 @@ const meldEverything = (player, meldedCards) => {
 
     const requiredMeldPoints = rules.meldPoints.find((p) => p.moreThan <= player.points && p.lessThan > player.points);
     if (requiredMeldPoints.required > totalScore) {
+      socketio.toHost(gameId).emit('show-message', `${player.name} tried to meld with ${totalScore}, but requires ${requiredMeldPoints.required}.`);
       return { error: `Your meld only has ${totalScore} points and you require ${requiredMeldPoints.required}` };
     }
 

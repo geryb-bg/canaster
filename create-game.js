@@ -70,6 +70,7 @@ export const playerJoins = (playerName, gameId, socketio) => {
   };
   game.players.push(player);
 
+  socketio.toHost(gameId).emit('show-message', `${playerName} has joined the game.`);
   socketio.toHost(gameId).emit('game-state', game);
   return { msg: 'Player joined' };
 };
@@ -99,6 +100,8 @@ export const startGame = (gameId) => {
   game.players[playersTurn].myTurn = true;
   assignPacks(game);
   dealCards(game);
+
+  //TODO player cards here
   return game;
 };
 
