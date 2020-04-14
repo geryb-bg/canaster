@@ -14,13 +14,17 @@ import {
 } from "../common.js";
 
 let hand = [];
+let socket;
 
 function begin() {
   if (getPlayerName() && getGameId()) {
+    console.log('creating socket');
+    socket = io();
     fetchHand().then(() => {
       renderHand();
     });
   } else {
+
     showAddNewPlayer();
   }
 }
@@ -73,6 +77,12 @@ async function addNewPlayer() {
   }
 }
 
+const sleep = milliseconds => {
+  return new Promise(resolve => {
+    setTimeout(resolve, milliseconds)
+  });
+};
+
 async function fetchHand() {
   let playerId = getPlayerName();
   let gameId = getGameId();
@@ -80,7 +90,8 @@ async function fetchHand() {
 
   if (response.waiting) {
     showWaitForGameToStart();
-    setTimeout(fetchHand, 4000);
+    await sleep(4000);
+    return fetchHand();
   } else {
     hideWaitForGameToStart();
     hand = response;
@@ -97,7 +108,6 @@ function hideWaitForGameToStart() {
 
 function renderHand() {
   const cardRow = document.querySelector("#card-row");
-
   clearNode(cardRow);
 
   for (let card of hand) {

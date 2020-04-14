@@ -176,7 +176,6 @@ customElements.define(
     }
 
     attributeChangedCallback(attr, oldValue, newValue) {
-      console.log(attr, newValue);
       this[attr] = newValue;
       if (newValue) this.render();
     }

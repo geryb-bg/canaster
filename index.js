@@ -1,11 +1,16 @@
 import express from 'express';
 import bodyParser from 'body-parser';
+import http from 'http';
+import io from 'socket.io';
 import { createGame, playerJoins, startGame } from './create-game.js';
 import { games } from './data/game.js';
 import { playerCards, playerDraw, playerDiscard, meldCards, meldCardsWithDiscard } from './play-game.js';
 
 const app = express();
 const port = 3000;
+
+const httpServer = http.createServer(app)
+const socketio = io(httpServer);
 
 app.use(bodyParser.json());
 app.use(express.static('public'));
@@ -65,4 +70,12 @@ app.post('/melddiscard/:playerName/:gameId', (req, res) => {
   res.send(result);
 });
 
-app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
+socketio.on('connection', (socket) => {
+  console.log('a user connected');
+
+  socket.on('disconnect', function(){
+    console.log('user disconnected');
+  });
+});
+
+httpServer.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
