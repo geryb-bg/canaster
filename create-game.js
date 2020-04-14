@@ -92,6 +92,8 @@ export const startGame = (gameId) => {
 const clearGameBoard = (game) => {
   game.drawPile = [];
   game.discardPile = [];
+  game.blackThree.icon = '';
+  game.blackThree.suite = '';
   for (let player of game.players) {
     player.cards = [];
     player.meld = {};
@@ -105,7 +107,7 @@ const clearGameBoard = (game) => {
 const assignPacks = (game) => {
   const numPacks = rules.packs.find((p) => p.players === game.players.length);
   for (let i = 0; i < numPacks.packs; i++) {
-    game.drawPile = game.drawPile.concat(cards.onePack);
+    game.drawPile = [...game.drawPile, ...cards.onePack];
   }
 };
 

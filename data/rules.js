@@ -1,7 +1,7 @@
 export const rules = {
   startingHand: 11,
   packs: [
-    { players: 2, packs: 1 },
+    { players: 2, packs: 2 },
     { players: 3, packs: 2 },
     { players: 4, packs: 2 },
     { players: 5, packs: 3 },
