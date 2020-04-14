@@ -5,6 +5,11 @@ import '../components/game-player/game-player.js';
 import { fetchJson, getGameId, setGameInUrl, clearNode } from './common.js';
 
 let game;
+let socket = io();
+
+socket.on('connect', () => {
+  console.log("connected to server")
+});
 
 function begin() {
   const gameId = getGameId();
@@ -23,9 +28,15 @@ async function getGameState(gameId) {
   const response = await fetchJson(`/game/${gameId}`, { method: 'GET' });
   if (!response.error) {
     game = response;
+
     loadGameDetails();
 
-    //TODO: setTimeout(() => getGameState(gameId), 5000);
+    socket.emit('join-game', game.gameId);
+
+    socket.on('game-state', (gameState) => {
+      game = gameState;
+      loadGameDetails();
+    });
   }
 }
 

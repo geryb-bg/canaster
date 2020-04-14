@@ -73,7 +73,13 @@ app.post('/melddiscard/:playerName/:gameId', (req, res) => {
 socketio.on('connection', (socket) => {
   console.log('a user connected');
 
-  socket.on('disconnect', function(){
+  socket.on('join-game', (room) => {
+    console.log('user joined game ' + room);
+    socket.join(room)
+
+  });
+
+  socket.on('disconnect', () => {
     console.log('user disconnected');
   });
 });
