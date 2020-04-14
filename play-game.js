@@ -82,7 +82,7 @@ export const playerDiscard = (playerName, gameId, card, socketio) => {
   player.cards.splice(indexOfDiscarded, 1);
 
   if (!player.cards.length && player.canaster.length) {
-    const overallWinner = endRound(playerName, gameId);
+    const overallWinner = endRound(playerName, gameId, socketio);
 
     if (overallWinner) {
       return { error: `Game Over! ${overallWinner} wins!` };
@@ -112,7 +112,7 @@ export const playerDiscard = (playerName, gameId, card, socketio) => {
   }
 };
 
-export const meldCardsWithDiscard = (playerName, gameId, meldedCards) => {
+export const meldCardsWithDiscard = (playerName, gameId, meldedCards, socketio) => {
   const { game, player, errorMessage } = getGameAndPlayer(gameId, playerName);
   if (errorMessage) {
     return { error: errorMessage };
@@ -156,10 +156,12 @@ export const meldCardsWithDiscard = (playerName, gameId, meldedCards) => {
   player.cards = [...player.cards, ...game.discardPile];
   game.discardPile = [];
 
+  socketio.toHost(gameId).emit('game-state', game);
+
   return player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
 };
 
-export const meldCards = (playerName, gameId, meldedCards) => {
+export const meldCards = (playerName, gameId, meldedCards, socketio) => {
   const { game, player, errorMessage } = getGameAndPlayer(gameId, playerName);
   if (errorMessage) {
     return { error: errorMessage };
@@ -174,6 +176,8 @@ export const meldCards = (playerName, gameId, meldedCards) => {
   if (!player.hasDrawn) {
     return { error: 'You must draw a card first' };
   }
+
+  socketio.toHost(gameId).emit('game-state', game);
 
   return meldEverything(player, meldedCards);
 };

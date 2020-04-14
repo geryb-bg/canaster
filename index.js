@@ -41,7 +41,7 @@ app.put('/game/:gameId', (req, res) => {
 });
 
 app.post('/player/:playerName/:gameId', (req, res) => {
-  const message = playerJoins(req.params.playerName, req.params.gameId);
+  const message = playerJoins(req.params.playerName, req.params.gameId, socketio);
   res.send(message);
 });
 
@@ -61,12 +61,12 @@ app.post('/discard/:playerName/:gameId', (req, res) => {
 });
 
 app.post('/meld/:playerName/:gameId', (req, res) => {
-  const result = meldCards(req.params.playerName, req.params.gameId, req.body.cards);
+  const result = meldCards(req.params.playerName, req.params.gameId, req.body.cards, socketio);
   res.send(result);
 });
 
 app.post('/melddiscard/:playerName/:gameId', (req, res) => {
-  const result = meldCardsWithDiscard(req.params.playerName, req.params.gameId, req.body.cards);
+  const result = meldCardsWithDiscard(req.params.playerName, req.params.gameId, req.body.cards, socketio);
   res.send(result);
 });
 

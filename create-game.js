@@ -16,6 +16,7 @@ export const createGame = () => {
     roundStarted: false,
     gameOver: false,
     winner: '',
+    winningScore: 0,
     blackThree: {
       value: '3',
       icon: '',
@@ -38,7 +39,7 @@ const getName = () => {
   return name;
 };
 
-export const playerJoins = (playerName, gameId) => {
+export const playerJoins = (playerName, gameId, socketio) => {
   const game = games.find((g) => g.gameId === gameId);
   if (!game) {
     return { error: 'This game does not exist.' };
@@ -68,6 +69,8 @@ export const playerJoins = (playerName, gameId) => {
     canaster: [],
   };
   game.players.push(player);
+
+  socketio.toHost(gameId).emit('game-state', game);
   return { msg: 'Player joined' };
 };
 

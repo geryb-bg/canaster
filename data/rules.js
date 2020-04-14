@@ -31,9 +31,12 @@ export const rules = {
   },
   otherPoints: {
     win: 100,
-    blackCanaster: 300,
-    redCanaster: 500,
     blackThree: 5,
     redThree: 100,
+    canaster: {
+      black: 300,
+      red: 500,
+    },
   },
+  winningPoints: 5000,
 };

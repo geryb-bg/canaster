@@ -415,6 +415,7 @@ export const games = [
     roundStarted: true,
     gameOver: false,
     winner: '',
+    winningScore: 0,
     blackThree: {
       value: '3',
       icon: '',
