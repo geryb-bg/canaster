@@ -111,16 +111,34 @@ export const meldCardsWithDiscard = (playerName, gameId, meldedCards) => {
     return { error: 'It is not your turn!' };
   }
 
-  //TODO: check can perform meld with discard
+  if (!game.discardPile.length) {
+    return { error: `Srsly??? What are you doing, that's a black 3` };
+  }
+
+  const discardCard = game.discardPile[game.discardPile.length - 1];
+  if (discardCard.value === '2' || discardCard.value === 'Joker') {
+    return { error: 'We are sorry, this game can not do Joker canasters yet.' };
+  }
+  const existingMeld = player.meld[discardCard.value];
+  if (!existingMeld) {
+    const newMeld = meldedCards.filter((c) => c.value === discardCard.value);
+    if (newMeld.length < 2) {
+      return { error: 'The discard card does not fit into any of your melds.' };
+    }
+  }
+
+  meldedCards.push(discardCard);
 
   const result = meldEverything(player, meldedCards);
   if (result.error) return result;
 
   player.hasDrawn = true;
-  //TODO:
-  //add remainder of discard pile to players cards
-  //remvove all cards from discard pile
-  return player.cards;
+
+  game.discardPile.pop();
+  player.cards = [...player.cards, ...game.discardPile];
+  game.discardPile = [];
+
+  return player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
 };
 
 export const meldCards = (playerName, gameId, meldedCards) => {
@@ -228,7 +246,7 @@ const meldEverything = (player, meldedCards) => {
 
   player.canaster = [...player.canaster, ...canasters];
 
-  return player.cards;
+  return player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
 };
 
 const groupMeldedCards = (meldedCards, invalidCards) => {
