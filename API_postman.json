@@ -1,0 +1,311 @@
+{
+	"info": {
+		"_postman_id": "5c5435f7-6f0e-4f0d-acb2-2f973e694c56",
+		"name": "Canaster",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create Game",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/game",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"game"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add player",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/player/:playerName/:gameId",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"player",
+						":playerName",
+						":gameId"
+					],
+					"variable": [
+						{
+							"key": "playerName",
+							"value": "Justin"
+						},
+						{
+							"key": "gameId",
+							"value": "unruffled-margulis"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all games",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/game",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"game"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get single game",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/game/:gameId",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"game",
+						":gameId"
+					],
+					"variable": [
+						{
+							"key": "gameId",
+							"value": "mystifying_murdock"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Start Game",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/game/:gameId",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"game",
+						":gameId"
+					],
+					"variable": [
+						{
+							"key": "gameId",
+							"value": ""
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get player cards",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/cards/:playerName/:gameId",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"cards",
+						":playerName",
+						":gameId"
+					],
+					"variable": [
+						{
+							"key": "playerName",
+							"value": "Richard"
+						},
+						{
+							"key": "gameId",
+							"value": "mystifying_murdock"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Discard card",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/draw/:playerName/:gameId",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"draw",
+						":playerName",
+						":gameId"
+					],
+					"variable": [
+						{
+							"key": "playerName",
+							"value": "Gery"
+						},
+						{
+							"key": "gameId",
+							"value": "mystifying_murdock"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Draw card",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/draw/:playerName/:gameId",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"draw",
+						":playerName",
+						":gameId"
+					],
+					"variable": [
+						{
+							"key": "playerName",
+							"value": "Gery"
+						},
+						{
+							"key": "gameId",
+							"value": "mystifying_murdock"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Discard card",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"card\" : {\n            \"value\": \"3\",\n            \"icon\": \"♣️\",\n            \"colour\": \"black\",\n            \"suite\": \"clubs\",\n            \"sortOrder\": 2\n        }\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:3000/discard/:playerName/:gameId",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"discard",
+						":playerName",
+						":gameId"
+					],
+					"variable": [
+						{
+							"key": "playerName",
+							"value": "Gery"
+						},
+						{
+							"key": "gameId",
+							"value": "mystifying_murdock"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Meld cards",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"cards\" : [{\n            \"value\": \"3\",\n            \"icon\": \"♣️\",\n            \"colour\": \"black\",\n            \"suite\": \"clubs\",\n            \"sortOrder\": 2\n        },\n        { \"value\": \"4\", \"icon\": \"♥️\", \"colour\": \"red\", \"suite\": \"hearts\", \"sortOrder\": 3 },\n{ \"value\": \"5\", \"icon\": \"♥️\", \"colour\": \"red\", \"suite\": \"hearts\", \"sortOrder\": 4 },\n{ \"value\": \"6\", \"icon\": \"♥️\", \"colour\": \"red\", \"suite\": \"hearts\", \"sortOrder\": 5 },\n{ \"value\": \"7\", \"icon\": \"♥️\", \"colour\": \"red\", \"suite\": \"hearts\", \"sortOrder\": 6 },\n{ \"value\": \"8\", \"icon\": \"♥️\", \"colour\": \"red\", \"suite\": \"hearts\", \"sortOrder\": 7 ,}\n{ \"value\": \"5\", \"icon\": \"♦️\", \"colour\": \"red\", \"suite\": \"diamonds\", \"sortOrder\": 4 },\n{ \"value\": \"6\", \"icon\": \"♦️\", \"colour\": \"red\", \"suite\": \"diamonds\", \"sortOrder\": 5 },\n{ \"value\": \"7\", \"icon\": \"♦️\", \"colour\": \"red\", \"suite\": \"diamonds\", \"sortOrder\": 6 },\n{ \"value\": \"8\", \"icon\": \"♦️\", \"colour\": \"red\", \"suite\": \"diamonds\", \"sortOrder\": 7 }\n{ \"value\": \"6\", \"icon\": \"♣️\", \"colour\": \"black\", \"suite\": \"clubs\", \"sortOrder\": 5 },\n{ \"value\": \"7\", \"icon\": \"♣️\", \"colour\": \"black\", \"suite\": \"clubs\", \"sortOrder\": 6 },\n{ \"value\": \"8\", \"icon\": \"♣️\", \"colour\": \"black\", \"suite\": \"clubs\", \"sortOrder\": 7 },\n{ \"value\": \"Joker\", \"icon\": \"🎭\", \"colour\": \"red\", \"suite\": \"none\", \"sortOrder\": 0, \"actingAs\": \"4\" },\n{ \"value\": \"2\", \"icon\": \"♥️\", \"colour\": \"red\", \"suite\": \"hearts\", \"sortOrder\": 1, \"actingAs\": \"4\" }]\n}"
+				},
+				"url": {
+					"raw": "http://localhost:3000/discard/:playerName/:gameId",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"discard",
+						":playerName",
+						":gameId"
+					],
+					"variable": [
+						{
+							"key": "playerName",
+							"value": "Gery"
+						},
+						{
+							"key": "gameId",
+							"value": "mystifying_murdock"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

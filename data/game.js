@@ -414,9 +414,9 @@ export const games = [
     round: 1,
     blackThree: {
       value: '3',
-      icon: '♣️',
+      icon: '',
       colour: 'black',
-      suite: 'clubs',
+      suite: '',
       sortOrder: 2,
     },
   },

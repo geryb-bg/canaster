@@ -49,19 +49,22 @@ function loadGameDetails() {
     drawPileCard.upsideDown = true;
     drawPile.appendChild(drawPileCard);
 
+    const cardElement = document.createElement('game-card');
+
     let topCard;
     if (game.discardPile.length) {
       topCard = game.discardPile[game.discardPile.length - 1];
+      cardElement.stacked = true;
     } else {
       topCard = game.blackThree;
+      if (!topCard.suite) {
+        topCard.value = '';
+      }
     }
-
-    const cardElement = document.createElement('game-card');
     cardElement.setAttribute('colour', topCard.colour);
     cardElement.setAttribute('value', topCard.value);
     cardElement.setAttribute('icon', topCard.icon);
     cardElement.setAttribute('suite', topCard.suite);
-    cardElement.stacked = true;
     discardPile.appendChild(cardElement);
   } else {
     gameDetails.innerText = `Waiting to start`;

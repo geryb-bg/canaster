@@ -15,9 +15,9 @@ export const createGame = () => {
     round: 0,
     blackThree: {
       value: '3',
-      icon: '♣️',
+      icon: '',
       colour: 'black',
-      suite: 'clubs',
+      suite: '',
       sortOrder: 2,
     },
   };

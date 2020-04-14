@@ -2,7 +2,7 @@ import express from 'express';
 import bodyParser from 'body-parser';
 import { createGame, playerJoins, startGame } from './create-game.js';
 import { games } from './data/game.js';
-import { playerCards, playerDraw, playerDiscard, meldCards } from './play-game.js';
+import { playerCards, playerDraw, playerDiscard, meldCards, meldCardsWithDiscard } from './play-game.js';
 
 const app = express();
 const port = 3000;
@@ -61,7 +61,8 @@ app.post('/meld/:playerName/:gameId', (req, res) => {
 });
 
 app.post('/melddiscard/:playerName/:gameId', (req, res) => {
-  res.send('wait');
+  const result = meldCardsWithDiscard(req.params.playerName, req.params.gameId, req.body.cards);
+  res.send(result);
 });
 
 app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));

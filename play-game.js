@@ -3,30 +3,26 @@ import { cards } from './data/cards.js';
 import { rules } from './data/rules.js';
 
 export const playerCards = (playerName, gameId) => {
-  const game = games.find((g) => g.gameId === gameId);
-  if (!game) {
-    return { error: 'This game does not exist.' };
+  const { game, player, errorMessage } = getGameAndPlayer(gameId, playerName);
+  if (errorMessage) {
+    return { error: errorMessage };
   }
   if (!game.started) {
     return { waiting: true };
-  }
-  const player = game.players.find((p) => p.name === playerName);
-  if (!player) {
-    return { error: 'This player does not exist in this game.' };
   }
 
   return player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
 };
 
 export const playerDraw = (playerName, gameId) => {
-  const game = games.find((g) => g.gameId === gameId);
-  if (!game || !game.started) {
-    return { error: 'This game does not exist or has not yet started.' };
+  const { game, player, errorMessage } = getGameAndPlayer(gameId, playerName);
+  if (errorMessage) {
+    return { error: errorMessage };
   }
-  const player = game.players.find((p) => p.name === playerName);
-  if (!player) {
-    return { error: 'This player does not exist in this game.' };
+  if (!game.started) {
+    return { error: `${gameId} game has not yet started.` };
   }
+
   if (!player.myTurn) {
     return { error: 'It is not your turn!' };
   }
@@ -61,14 +57,14 @@ const drawAgain = (drawPile, player, newCards) => {
 };
 
 export const playerDiscard = (playerName, gameId, card) => {
-  const game = games.find((g) => g.gameId === gameId);
-  if (!game || !game.started) {
-    return { error: 'This game does not exist or has not yet started.' };
+  const { game, player, errorMessage } = getGameAndPlayer(gameId, playerName);
+  if (errorMessage) {
+    return { error: errorMessage };
   }
-  const player = game.players.find((p) => p.name === playerName);
-  if (!player) {
-    return { error: 'This player does not exist in this game.' };
+  if (!game.started) {
+    return { error: `${gameId} game has not yet started.` };
   }
+
   if (!player.myTurn) {
     return { error: 'It is not your turn!' };
   }
@@ -102,18 +98,51 @@ export const playerDiscard = (playerName, gameId, card) => {
   return player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
 };
 
-export const meldCards = (playerName, gameId, meldedCards) => {
-  const game = games.find((g) => g.gameId === gameId);
-  if (!game || !game.started) {
-    return { error: 'This game does not exist or has not yet started.' };
+export const meldCardsWithDiscard = (playerName, gameId, meldedCards) => {
+  const { game, player, errorMessage } = getGameAndPlayer(gameId, playerName);
+  if (errorMessage) {
+    return { error: errorMessage };
   }
-  const player = game.players.find((p) => p.name === playerName);
-  if (!player) {
-    return { error: 'This player does not exist in this game.' };
+  if (!game.started) {
+    return { error: `${gameId} game has not yet started.` };
   }
+
   if (!player.myTurn) {
     return { error: 'It is not your turn!' };
   }
+
+  //TODO: check can perform meld with discard
+
+  const result = meldEverything(player, meldedCards);
+  if (result.error) return result;
+
+  player.hasDrawn = true;
+  //TODO:
+  //add remainder of discard pile to players cards
+  //remvove all cards from discard pile
+  return player.cards;
+};
+
+export const meldCards = (playerName, gameId, meldedCards) => {
+  const { game, player, errorMessage } = getGameAndPlayer(gameId, playerName);
+  if (errorMessage) {
+    return { error: errorMessage };
+  }
+  if (!game.started) {
+    return { error: `${gameId} game has not yet started.` };
+  }
+
+  if (!player.myTurn) {
+    return { error: 'It is not your turn!' };
+  }
+  if (!player.hasDrawn) {
+    return { error: 'You must draw a card first' };
+  }
+
+  return meldEverything(player, meldedCards);
+};
+
+const meldEverything = (player, meldedCards) => {
   if (!meldedCards.length) {
     return { error: 'Please select cards to meld.' };
   }
@@ -192,7 +221,9 @@ export const meldCards = (playerName, gameId, meldedCards) => {
   for (let card of meldedCards) {
     const playerCard = player.cards.find((c) => c.value === card.value && c.suite === card.suite);
     const indexOfDiscarded = player.cards.indexOf(playerCard);
-    player.cards.splice(indexOfDiscarded, 1);
+    if (indexOfDiscarded > -1) {
+      player.cards.splice(indexOfDiscarded, 1);
+    }
   }
 
   player.canaster = [...player.canaster, ...canasters];
@@ -236,6 +267,19 @@ const isValidMeld = (meld, meldKey) => {
   if (numJokers >= meld.length - numJokers) {
     return `${meldKey}s meld has too many jokers`;
   }
+};
+
+const getGameAndPlayer = (gameId, playerName) => {
+  const game = games.find((g) => g.gameId === gameId);
+  if (!game) {
+    return { errorMessage: `${gameId} game does not exist.` };
+  }
+  const player = game.players.find((p) => p.name === playerName);
+  if (!player) {
+    return { errorMessage: `${playerName} player does not exist in this game.` };
+  }
+
+  return { game, player };
 };
 
 export const drawCard = (drawPile) => {
