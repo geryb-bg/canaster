@@ -62,16 +62,28 @@ function loadGameDetails() {
   const discardPile = document.querySelector('#discard-pile');
   clearNode(discardPile);
 
-  if (game.started) {
-    gameDetails.innerText = `Round: ${game.round}`;
-    startGameButton.style.display = 'none';
+  if (game.gameOver) {
+    gameDetails.innerText = `Game Over! The winner is ${game.winner}`;
+    startGameButton.style.display = "none";
+    return
+  }
 
-    const drawPileCard = document.createElement('game-card');
+  if (!game.started) {
+    gameDetails.innerText = `Waiting to start`;
+    startGameButton.style.display = "";
+    startGameButton.addEventListener("click", () => {
+      startGame();
+    });
+  } else if (game.roundStarted) {
+    gameDetails.innerText = `Round: ${game.round}`;
+    startGameButton.style.display = "none";
+
+    const drawPileCard = document.createElement("game-card");
     drawPileCard.stacked = true;
     drawPileCard.upsideDown = true;
     drawPile.appendChild(drawPileCard);
 
-    const cardElement = document.createElement('game-card');
+    const cardElement = document.createElement("game-card");
 
     let topCard;
     if (game.discardPile.length) {
@@ -80,18 +92,18 @@ function loadGameDetails() {
     } else {
       topCard = game.blackThree;
       if (!topCard.suite) {
-        topCard.value = '';
+        topCard.value = "";
       }
     }
-    cardElement.setAttribute('colour', topCard.colour);
-    cardElement.setAttribute('value', topCard.value);
-    cardElement.setAttribute('icon', topCard.icon);
-    cardElement.setAttribute('suite', topCard.suite);
+    cardElement.setAttribute("colour", topCard.colour);
+    cardElement.setAttribute("value", topCard.value);
+    cardElement.setAttribute("icon", topCard.icon);
+    cardElement.setAttribute("suite", topCard.suite);
     discardPile.appendChild(cardElement);
   } else {
-    gameDetails.innerText = `Waiting to start`;
-    startGameButton.style.display = '';
-    startGameButton.addEventListener('click', () => {
+    gameDetails.innerText = `End of round ${game.round}, click to start the next round.`;
+    startGameButton.style.display = "";
+    startGameButton.addEventListener("click", () => {
       startGame();
     });
   }
