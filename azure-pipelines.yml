@@ -16,7 +16,7 @@ steps:
 
   - task: CopyFiles@2
     inputs:
-      SourceFolder: '$(System.DefaultWorkingDirectory)/api'
+      SourceFolder: '$(System.DefaultWorkingDirectory)'
       Contents: |
         **/*
         *
