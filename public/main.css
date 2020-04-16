@@ -54,12 +54,16 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
+  max-height: calc(50% - 100px);
+  overflow: hidden;
 }
 
 #players-bot {
   display: flex;
   flex-direction: row-reverse;
   flex-wrap: wrap;
+  max-height: calc(50% - 100px);
+  overflow: hidden;
 }
 
 .game-details {
@@ -67,6 +71,7 @@
   flex-direction: row;
   height: 200px;
   background-color: #005500;
+  box-shadow: 0px 0px 10px 5px rgba(0,0,0,0.75);
 }
 
 .game-details > * {

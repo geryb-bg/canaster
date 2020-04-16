@@ -43,9 +43,11 @@ const renderMelds = (player) => {
 
 const renderThrees = (player) => {
   if (player.redThrees && player.redThrees.length > 0) {
+
+    const cards = player.redThrees.map((three) => `<game-card colour="${three.colour}" value="${three.value}" icon="${three.icon}" suite="${three.suite}"></game-card>`)
     return `
         <card-collection orientation="vertical">
-            ${player.redThrees.map((three) => `<game-card colour="${three.colour}" value="${three.value}" icon="${three.icon}" suite="${three.suite}"></game-card>`)}
+            ${cards.join('')}
         </card-collection>
     `
   }
