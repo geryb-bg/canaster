@@ -8,26 +8,58 @@ const template = (props) => `
         min-width: 200px;
       }
       
+      .cards {
+        display: flex;
+        flex-direction: row;
+      }
+      
     </style>
 
     <div>
-      <h2>${props.name} ${props.turn ? '⭐️' : ''}</h2>
-      <h3>Points: ${props.points}</h3>
-      <card-collection>
-        ${props.redThrees.map((three) => `<game-card colour="${three.colour}" value="${three.value}" icon="${three.icon}" suite="${three.suite}"></game-card>`)}
-      </card-collection>
+      <h2>${props.player.myTurn ? "⭐️" : ""} ${props.player.name}: ${props.player.points} </h2>
+      <div class="cards">
+        ${renderThrees(props.player)}
+        ${renderMelds(props.player)}
+      </div>
+
     </div>`;
 
+const renderMeld = (meldCards) => `
+<card-collection orientation="vertical"> 
+    ${meldCards.map((card) => ` 
+        <game-card colour="${card.colour}" value="${card.value}" icon="${card.icon}" suite="${card.suite}"></game-card>`)} 
+</card-collection>
+`;
+
+const renderMelds = (player) => {
+  let res = "";
+  for (let meldKey of Object.keys(player.meld)) {
+    res += renderMeld(player.meld[meldKey]);
+  }
+  return res;
+};
+
+const renderThrees = (player) => {
+  if (player.redThrees && player.redThrees.length > 0) {
+    return `
+        <card-collection orientation="vertical">
+            ${player.redThrees.map((three) => `<game-card colour="${three.colour}" value="${three.value}" icon="${three.icon}" suite="${three.suite}"></game-card>`)}
+        </card-collection>
+    `
+  }
+  return "";
+};
+
 customElements.define(
-  'game-player',
+  "game-player",
   class GamePlayer extends HTMLElement {
     static get observedAttributes() {
-      return ['name', 'turn', 'points'];
+      return [];
     }
 
     constructor() {
       super();
-      this.shadow = this.attachShadow({ mode: 'open' });
+      this.shadow = this.attachShadow({ mode: "open" });
       this.redThrees = [];
     }
 
@@ -40,20 +72,15 @@ customElements.define(
     }
 
     getPlayer() {
-      return {
-        name: this.name,
-        turn: this.turn,
-        redThrees: this.redThrees,
-        points: this.points,
-      };
+      return this.player();
     }
 
     attributeChangedCallback(attr, oldValue, newValue) {
-      console.log(newValue);
       this[attr] = newValue;
       if (newValue) this.render();
     }
 
-    disconnectedCallback() {}
+    disconnectedCallback() {
+    }
   }
 );

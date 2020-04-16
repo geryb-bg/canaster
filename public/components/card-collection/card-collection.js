@@ -2,15 +2,15 @@ const template = (props) => `
     <style>
       :host {
         margin-left: 50px;
-        margin-top: 100px;
+        margin-top: ${props.orientation === 'vertical' ? '140px' : '100px'};
         padding: 10px;
         display: flex;
-        flex-direction: row;
+        flex-direction: ${props.orientation === 'vertical' ? 'column' : 'row'};
         flex-wrap: wrap;
       }
       
       ::slotted(game-card) {
-        margin-top: -100px;
+        margin-top: ${props.orientation === 'vertical' ? '-140px' : '-100px'};
         margin-left: -50px;
       }
       
@@ -22,7 +22,7 @@ customElements.define(
   "card-collection",
   class CardCollection extends HTMLElement {
     static get observedAttributes() {
-      return [];
+      return ['orientation'];
     }
 
     constructor() {
