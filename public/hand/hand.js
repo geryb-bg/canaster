@@ -14,18 +14,50 @@ import {
 } from "../common.js";
 
 let hand = [];
-let socket;
+let socket = io();
+
+socket.on('connect', () => {
+  console.log('connected to server');
+});
+
+socket.on('game-started', () => {
+  fetchHand().then(() => {
+    renderHand();
+  });
+});
+
+socket.on('turn-change', (player) => {
+  setPlayerTurn(player)
+});
 
 function begin() {
   if (getPlayerName() && getGameId()) {
-    console.log('creating socket');
-    socket = io();
+    socket.emit('join-game-player', getGameId());
     fetchHand().then(() => {
       renderHand();
     });
+    getPlayerTurn()
   } else {
 
     showAddNewPlayer();
+  }
+}
+
+async function getPlayerTurn() {
+  const response = await fetchJson(`/turn/${getPlayerName()}/${getGameId()}`);
+  if (!response.error) {
+    setPlayerTurn(response.player)
+  }
+
+}
+
+function setPlayerTurn(player) {
+  if (player === getPlayerName()) {
+    document.querySelector('#buttons').style.display = '';
+    document.querySelector('#message').innerText = 'It is your turn';
+  } else {
+    document.querySelector('#buttons').style.display = 'none';
+    document.querySelector('#message').innerText = `It is ${player}'s turn`;
   }
 }
 
@@ -90,8 +122,8 @@ async function fetchHand() {
 
   if (response.waiting) {
     showWaitForGameToStart();
-    await sleep(4000);
-    return fetchHand();
+    //await sleep(4000);
+    //return fetchHand();
   } else {
     hideWaitForGameToStart();
     hand = response;

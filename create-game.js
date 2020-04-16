@@ -75,7 +75,7 @@ export const playerJoins = (playerName, gameId, socketio) => {
   return { msg: 'Player joined' };
 };
 
-export const startGame = (gameId) => {
+export const startGame = (gameId, socketio) => {
   const game = games.find((g) => g.gameId === gameId);
   if (!game) {
     return { error: 'This game does not exist.' };
@@ -101,7 +101,9 @@ export const startGame = (gameId) => {
   assignPacks(game);
   dealCards(game);
 
-  //TODO player cards here
+  socketio.toPlayers(gameId).emit('game-started');
+  socketio.toPlayers(gameId).emit('turn-change', game.players[playersTurn].name);
+
   return game;
 };
 

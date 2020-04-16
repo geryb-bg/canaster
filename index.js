@@ -4,7 +4,7 @@ import http from 'http';
 import io from 'socket.io';
 import { createGame, playerJoins, startGame } from './create-game.js';
 import { games } from './data/game.js';
-import { playerCards, playerDraw, playerDiscard, meldCards, meldCardsWithDiscard } from './play-game.js';
+import { playerCards, playerDraw, playerDiscard, meldCards, meldCardsWithDiscard, getTurn } from './play-game.js';
 
 const app = express();
 const port = 8080;
@@ -36,9 +36,19 @@ app.post('/game', (req, res) => {
 });
 
 app.put('/game/:gameId', (req, res) => {
-  const game = startGame(req.params.gameId);
+  const game = startGame(req.params.gameId, socketio);
   res.send(game);
 });
+
+app.get('/turn/:playerName/:gameId', (req, res) => {
+  const playerTurn = getTurn(req.params.playerName, req.params.gameId);
+  if (playerTurn) {
+    res.send({player: playerTurn.name});
+  } else {
+    res.send({player: ""});
+  }
+});
+
 
 app.post('/player/:playerName/:gameId', (req, res) => {
   const message = playerJoins(req.params.playerName, req.params.gameId, socketio);

@@ -124,7 +124,7 @@ export const playerDiscard = (playerName, gameId, card, socketio) => {
     socketio.toHost(gameId).emit('game-state', game);
     socketio.toHost(gameId).emit('show-message', `${playerName} discarded a card, it is now ${game.players[playersTurn].name}'s turn.`);
 
-    //TODO player message here (it's your turn)
+    socketio.toPlayers(gameId).emit('turn-change', game.players[playersTurn].name);
 
     return player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
   }
@@ -370,4 +370,9 @@ export const drawCard = (drawPile) => {
   const randomIndex = Math.floor(Math.random() * drawPile.length);
   const chosenCard = drawPile.splice(randomIndex, 1);
   return chosenCard[0];
+};
+
+export const getTurn = (playerName, gameId) => {
+  const game = games.find((g) => g.gameId === gameId);
+  return game.players.find(p => p.myTurn);
 };
