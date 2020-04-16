@@ -24,12 +24,14 @@ const template = (props) => `
 
     </div>`;
 
-const renderMeld = (meldCards) => `
-<card-collection orientation="vertical"> 
-    ${meldCards.map((card) => ` 
-        <game-card colour="${card.colour}" value="${card.value}" icon="${card.icon}" suite="${card.suite}"></game-card>`)} 
-</card-collection>
-`;
+const renderMeld = (meldCards) =>  {
+  const cards = meldCards.map((card) => ` 
+        <game-card colour="${card.colour}" value="${card.value}" icon="${card.icon}" suite="${card.suite}"></game-card>`)
+
+  return `<card-collection orientation="vertical">
+        ${cards.join('')}
+    </card-collection>`;
+};
 
 const renderMelds = (player) => {
   let res = "";

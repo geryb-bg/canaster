@@ -2,7 +2,7 @@ const template = (props) => `
     <style>
       :host {
         margin-left: 50px;
-        margin-top: ${props.orientation === 'vertical' ? '140px' : '100px'};
+        margin-top: ${props.orientation === 'vertical' ? '120px' : '100px'};
         padding: 10px;
         display: flex;
         flex-direction: ${props.orientation === 'vertical' ? 'column' : 'row'};
@@ -10,7 +10,7 @@ const template = (props) => `
       }
       
       ::slotted(game-card) {
-        margin-top: ${props.orientation === 'vertical' ? '-140px' : '-100px'};
+        margin-top: ${props.orientation === 'vertical' ? '-120px' : '-100px'};
         margin-left: -50px;
       }
       
