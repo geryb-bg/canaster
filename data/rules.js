@@ -1,13 +1,11 @@
 export const rules = {
-  startingHand: 11,
+  startingHand: 13,
   packs: [
     { players: 2, packs: 2 },
     { players: 3, packs: 2 },
     { players: 4, packs: 2 },
     { players: 5, packs: 3 },
     { players: 6, packs: 3 },
-    { players: 7, packs: 4 },
-    { players: 8, packs: 4 },
   ],
   meldPoints: [
     { moreThan: 0, lessThan: 1500, required: 50 },

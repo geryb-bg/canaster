@@ -53,7 +53,7 @@ export const playerJoins = (playerName, gameId, socketio) => {
   if (game.started) {
     return { error: 'This game has already started, please join a different game.' };
   }
-  if (game.players.length === 8) {
+  if (game.players.length === 6) {
     return { error: 'This game has too many players, please join a different game.' };
   }
 

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" type="text/css" href="../style/reset.css" />
+    <link rel="stylesheet" type="text/css" href="rules.css" />
+    <title>Awesome Friends Canaster - Rules</title>
+  </head>
+  <body>
+    <div id="content">
+      <h1>Canaster Rules</h1>
+      <h2>Players</h2>
+      <p>Each game must have at least 2 and at most 6 players. The number of card decks included is based on the number of players:</p>
+      <ul id="card-deck"></ul>
+      <h2>Starting the game</h2>
+      <p>
+        Each player will receive <span id="starting-hand"></span> cards. Then three cards will be dealt upside down on the discard pile and one card right way
+        up.
+      </p>
+      <p>
+        If the card that is right way up is a black 3, the players will not be able to draw from the discard pile. If the card is a Joker, 2 or red 3 then
+        another card will be added on top of that card.
+      </p>
+      <p>
+        If a player is dealt a red 3, it will appear on the main screen so that the other players can see it and they will be able to draw an extra card on
+        their first turn.
+      </p>
+      <h2>Playing the game</h2>
+      <p>
+        A player must choose to draw from the draw pile or the discard pile. If they want to draw from the discard pile they have to be able to meld with the
+        top card. The following rules apply when melding for the first time:
+      </p>
+      <ul id="meld-points"></ul>
+      <p>You can meld as many times as you like, you end your turn by discarding a card.</p>
+      <h2>Winning the round</h2>
+      <p>
+        A player wins a round when they have at least one canaster and they discard the last card in their hand. They will receive
+        <span id="win-points"></span> points for the win. The remainder of the points are added up as follows:
+      </p>
+      <ul id="other-points"></ul>
+      <ul id="card-points"></ul>
+      <p>
+        If any of the above mentioned cards are in the players hand, then they are subtracted from the points total. If a player does not have any melds and has
+        red threes, then the points for those red threes are also subtracted.
+      </p>
+
+      <h2>Winning the game</h2>
+      <p>
+        The first player to reach <span id="winning-points"></span> points wins the game. If there is more than one player that reaches this score, then the
+        person with higher points wins.
+      </p>
+    </div>
+
+    <script type="module" src="rules.js"></script>
+  </body>
+</html>

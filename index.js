@@ -4,6 +4,7 @@ import http from 'http';
 import io from 'socket.io';
 import { createGame, playerJoins, startGame } from './create-game.js';
 import { games } from './data/game.js';
+import { rules } from './data/rules.js';
 import { playerCards, playerDraw, playerDiscard, meldCards, meldCardsWithDiscard, getTurn } from './play-game.js';
 
 const app = express();
@@ -43,12 +44,11 @@ app.put('/game/:gameId', (req, res) => {
 app.get('/turn/:playerName/:gameId', (req, res) => {
   const playerTurn = getTurn(req.params.playerName, req.params.gameId);
   if (playerTurn) {
-    res.send({player: playerTurn.name});
+    res.send({ player: playerTurn.name });
   } else {
-    res.send({player: ""});
+    res.send({ player: '' });
   }
 });
-
 
 app.post('/player/:playerName/:gameId', (req, res) => {
   const message = playerJoins(req.params.playerName, req.params.gameId, socketio);
@@ -78,6 +78,10 @@ app.post('/meld/:playerName/:gameId', (req, res) => {
 app.post('/melddiscard/:playerName/:gameId', (req, res) => {
   const result = meldCardsWithDiscard(req.params.playerName, req.params.gameId, req.body.cards, socketio);
   res.send(result);
+});
+
+app.get('/allrules', (req, res) => {
+  res.send(rules);
 });
 
 socketio.toHost = (gameId) => socketio.to(`${gameId}-host`);
