@@ -6,7 +6,7 @@
   "type": "module",
   "scripts": {
     "debug": "nodemon --experimental-modules --inspect index.js",
-    "start": "node --experimental-modules --inspect index.js"
+    "start": "PORT=8080 node --experimental-modules --inspect index.js"
   },
   "author": "",
   "license": "ISC",

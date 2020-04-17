@@ -7,7 +7,7 @@ import { games } from './data/game.js';
 import { playerCards, playerDraw, playerDiscard, meldCards, meldCardsWithDiscard, getTurn } from './play-game.js';
 
 const app = express();
-const port = 8080;
+const port = process.env.PORT || 3000;
 
 const httpServer = http.createServer(app);
 const socketio = io(httpServer);

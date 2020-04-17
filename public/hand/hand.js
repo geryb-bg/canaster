@@ -1,17 +1,10 @@
-import "../components/game-card/game-card.js";
-import "../components/game-button/game-button.js";
-import "../components/game-dialog/game-dialog.js";
-import "../components/card-collection/card-collection.js";
-import "../components/card-dialog/card-dialog.js";
+import '../components/game-card/game-card.js';
+import '../components/game-button/game-button.js';
+import '../components/game-dialog/game-dialog.js';
+import '../components/card-collection/card-collection.js';
+import '../components/card-dialog/card-dialog.js';
 
-import {
-  fetchJson,
-  getGameId,
-  getPlayerName,
-  setPlayerAndGameInUrl,
-  clearNode,
-  showError,
-} from "../common.js";
+import { fetchJson, getGameId, getPlayerName, setPlayerAndGameInUrl, clearNode, showError } from '../common.js';
 
 let hand = [];
 let socket = io();
@@ -27,7 +20,7 @@ socket.on('game-started', () => {
 });
 
 socket.on('turn-change', (player) => {
-  setPlayerTurn(player)
+  setPlayerTurn(player);
 });
 
 function begin() {
@@ -36,9 +29,8 @@ function begin() {
     fetchHand().then(() => {
       renderHand();
     });
-    getPlayerTurn()
+    getPlayerTurn();
   } else {
-
     showAddNewPlayer();
   }
 }
@@ -46,9 +38,8 @@ function begin() {
 async function getPlayerTurn() {
   const response = await fetchJson(`/turn/${getPlayerName()}/${getGameId()}`);
   if (!response.error) {
-    setPlayerTurn(response.player)
+    setPlayerTurn(response.player);
   }
-
 }
 
 function setPlayerTurn(player) {
@@ -62,29 +53,25 @@ function setPlayerTurn(player) {
 }
 
 function showAddNewPlayer() {
-  const newPlayer = document.querySelector("#new-player");
-  newPlayer.style.display = "";
-  const addNewPlayerButton = document.querySelector("#add-new-player-button");
-  addNewPlayerButton.addEventListener("click", () => {
-    addNewPlayer();
-  });
+  const newPlayer = document.querySelector('#new-player');
+  newPlayer.style.display = '';
 }
 
 function hideAddNewPlayer() {
-  const newPlayer = document.querySelector("#new-player");
-  newPlayer.style.display = "none";
+  const newPlayer = document.querySelector('#new-player');
+  newPlayer.style.display = 'none';
 }
 
 async function addNewPlayer() {
-  const playerNameInput = document.querySelector("#player-name");
-  const gameIdInput = document.querySelector("#game-id");
+  const playerNameInput = document.querySelector('#player-name');
+  const gameIdInput = document.querySelector('#game-id');
   const playerName = playerNameInput.value;
   const gameId = gameIdInput.value;
 
   if (!gameId) {
     document.dispatchEvent(
-      new CustomEvent("show-message", {
-        detail: { message: "Please enter a game name" },
+      new CustomEvent('show-message', {
+        detail: { message: 'Please enter a game name' },
       })
     );
     return;
@@ -92,26 +79,26 @@ async function addNewPlayer() {
 
   if (!playerName) {
     document.dispatchEvent(
-      new CustomEvent("show-message", {
-        detail: { message: "Please enter your name" },
+      new CustomEvent('show-message', {
+        detail: { message: 'Please enter your name' },
       })
     );
     return;
   }
 
   const response = await fetchJson(`/player/${playerName}/${gameId}`, {
-    method: "POST",
+    method: 'POST',
   });
-  if (!response.error && response.msg === "Player joined") {
+  if (!response.error && response.msg === 'Player joined') {
     hideAddNewPlayer();
     setPlayerAndGameInUrl(playerName, gameId);
     begin();
   }
 }
 
-const sleep = milliseconds => {
-  return new Promise(resolve => {
-    setTimeout(resolve, milliseconds)
+const sleep = (milliseconds) => {
+  return new Promise((resolve) => {
+    setTimeout(resolve, milliseconds);
   });
 };
 
@@ -131,30 +118,30 @@ async function fetchHand() {
 }
 
 function showWaitForGameToStart() {
-  document.querySelector("#waiting-overlay").style.display = "";
+  document.querySelector('#waiting-overlay').style.display = '';
 }
 
 function hideWaitForGameToStart() {
-  document.querySelector("#waiting-overlay").style.display = "none";
+  document.querySelector('#waiting-overlay').style.display = 'none';
 }
 
 function renderHand() {
-  const cardRow = document.querySelector("#card-row");
+  const cardRow = document.querySelector('#card-row');
   clearNode(cardRow);
 
   for (let card of hand) {
-    const cardElement = document.createElement("game-card");
-    cardElement.setAttribute("colour", card.colour);
-    cardElement.setAttribute("value", card.value);
-    cardElement.setAttribute("icon", card.icon);
-    cardElement.setAttribute("suite", card.suite);
+    const cardElement = document.createElement('game-card');
+    cardElement.setAttribute('colour', card.colour);
+    cardElement.setAttribute('value', card.value);
+    cardElement.setAttribute('icon', card.icon);
+    cardElement.setAttribute('suite', card.suite);
     cardElement.selectable = true;
     cardRow.appendChild(cardElement);
   }
 }
 
 function getSelectedCards() {
-  const cardElements = document.querySelectorAll("game-card[selected]");
+  const cardElements = document.querySelectorAll('game-card[selected]');
   const res = [];
   cardElements.forEach((c) => {
     res.push(c.getCard());
@@ -163,9 +150,9 @@ function getSelectedCards() {
 }
 
 function showCardsInPopup(cards) {
-  const message = cards.length > 1 ? "Cards drawn:" : "Card drawn:";
+  const message = cards.length > 1 ? 'Cards drawn:' : 'Card drawn:';
   document.dispatchEvent(
-    new CustomEvent("show-cards", {
+    new CustomEvent('show-cards', {
       detail: { message: message, cards: cards },
     })
   );
@@ -186,12 +173,12 @@ async function discardCard() {
   const cards = getSelectedCards();
 
   if (cards.length === 0) {
-    showError("Please select a card to discard");
+    showError('Please select a card to discard');
     return;
   }
 
   if (cards.length > 1) {
-    showError("You can only discard a single card");
+    showError('You can only discard a single card');
     return;
   }
 
@@ -199,14 +186,11 @@ async function discardCard() {
     card: cards[0],
   };
 
-  const response = await fetchJson(
-    `/discard/${getPlayerName()}/${getGameId()}`,
-    {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+  const response = await fetchJson(`/discard/${getPlayerName()}/${getGameId()}`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+    headers: { 'Content-Type': 'application/json' },
+  });
   if (response.error) {
     return;
   }
@@ -218,7 +202,7 @@ async function discardCard() {
 async function meld() {
   const selectedCards = getSelectedCards();
   if (selectedCards.length === 0) {
-    showError("You must have at least one card selected");
+    showError('You must have at least one card selected');
     return;
   }
 
@@ -226,21 +210,17 @@ async function meld() {
     cards: selectedCards,
   };
 
-  const response = await fetchJson(
-    `/meld/${getPlayerName()}/${getGameId()}`,
-    {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+  const response = await fetchJson(`/meld/${getPlayerName()}/${getGameId()}`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+    headers: { 'Content-Type': 'application/json' },
+  });
   if (response.error) {
     return;
   }
 
   hand = response;
   renderHand();
-
 }
 
 async function meldDiscard() {
@@ -248,14 +228,11 @@ async function meldDiscard() {
     cards: getSelectedCards(),
   };
 
-  const response = await fetchJson(
-    `/melddiscard/${getPlayerName()}/${getGameId()}`,
-    {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: { "Content-Type": "application/json" },
-    }
-  );
+  const response = await fetchJson(`/melddiscard/${getPlayerName()}/${getGameId()}`, {
+    method: 'POST',
+    body: JSON.stringify(payload),
+    headers: { 'Content-Type': 'application/json' },
+  });
   if (response.error) {
     return;
   }
@@ -264,16 +241,19 @@ async function meldDiscard() {
   renderHand();
 }
 
-const drawButton = document.querySelector("#draw");
-drawButton.addEventListener("click", async () => drawACard());
+const addNewPlayerButton = document.querySelector('#add-new-player-button');
+addNewPlayerButton.onclick = () => addNewPlayer();
 
-const discardButton = document.querySelector("#discard");
-discardButton.addEventListener("click", async () => discardCard());
+const drawButton = document.querySelector('#draw');
+drawButton.onclick = async () => drawACard();
 
-const meldButton = document.querySelector("#meld");
-meldButton.addEventListener("click", async () => meld());
+const discardButton = document.querySelector('#discard');
+discardButton.onclick = async () => discardCard();
 
-const meldDiscardButton = document.querySelector("#meld-discard");
-meldDiscardButton.addEventListener("click", async () => meldDiscard());
+const meldButton = document.querySelector('#meld');
+meldButton.onclick = async () => meld();
+
+const meldDiscardButton = document.querySelector('#meld-discard');
+meldDiscardButton.onclick = async () => meldDiscard();
 
 begin();

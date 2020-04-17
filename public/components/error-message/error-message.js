@@ -19,29 +19,28 @@ const template = (props) => `
     `;
 
 customElements.define(
-  "error-message",
+  'error-message',
   class ErrorMessage extends HTMLElement {
     static get observedAttributes() {
-      return ["message"];
+      return ['message'];
     }
 
     constructor() {
       super();
-      this.shadow = this.attachShadow({ mode: "open" });
+      this.shadow = this.attachShadow({ mode: 'open' });
     }
 
     render() {
       this.shadow.innerHTML = template(this);
       const button = this.shadow.querySelector('#hide-dialog-button');
       button.addEventListener('click', () => {
-        this.parentNode.removeChild(this)
-      })
+        this.parentNode.removeChild(this);
+      });
     }
 
     connectedCallback() {
       this.render();
     }
-
 
     attributeChangedCallback(attr, oldValue, newValue) {
       this[attr] = newValue;

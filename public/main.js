@@ -4,6 +4,19 @@ import '../components/game-player/game-player.js';
 
 import { fetchJson, getGameId, setGameInUrl, clearNode } from './common.js';
 
+const startGameButton = document.querySelector('#start-game');
+startGameButton.onclick = () => {
+  startGame();
+};
+const createGameButton = document.querySelector('#create-game');
+createGameButton.onclick = () => {
+  createGame();
+};
+const joinGameButton = document.querySelector('#join-game');
+joinGameButton.onclick = () => {
+  window.location = '/hand';
+};
+
 let game;
 let socket = io();
 
@@ -23,8 +36,8 @@ socket.on('show-message', (msg) => {
   const msgElement = document.querySelector('#show-message');
   msgElement.innerText = msg;
   hideMsgTimeout = setTimeout(() => {
-    msgElement.innerText = "";
-  }, 5000)
+    msgElement.innerText = '';
+  }, 5000);
 });
 
 function begin() {
@@ -55,7 +68,6 @@ function loadGameDetails() {
   const gameName = document.querySelector('#game-name');
   gameName.innerText = game.gameId;
   const gameDetails = document.querySelector('#game-details');
-  const startGameButton = document.querySelector('#start-game');
 
   const drawPile = document.querySelector('#draw-pile');
   clearNode(drawPile);
@@ -64,26 +76,23 @@ function loadGameDetails() {
 
   if (game.gameOver) {
     gameDetails.innerText = `Game Over! The winner is ${game.winner}`;
-    startGameButton.style.display = "none";
-    return
+    startGameButton.style.display = 'none';
+    return;
   }
 
   if (!game.started) {
     gameDetails.innerText = `Waiting to start`;
-    startGameButton.style.display = "";
-    startGameButton.addEventListener("click", () => {
-      startGame();
-    });
+    startGameButton.style.display = '';
   } else if (game.roundStarted) {
     gameDetails.innerText = `Round: ${game.round}`;
-    startGameButton.style.display = "none";
+    startGameButton.style.display = 'none';
 
-    const drawPileCard = document.createElement("game-card");
+    const drawPileCard = document.createElement('game-card');
     drawPileCard.stacked = true;
     drawPileCard.upsideDown = true;
     drawPile.appendChild(drawPileCard);
 
-    const cardElement = document.createElement("game-card");
+    const cardElement = document.createElement('game-card');
 
     let topCard;
     if (game.discardPile.length) {
@@ -92,20 +101,17 @@ function loadGameDetails() {
     } else {
       topCard = game.blackThree;
       if (!topCard.suite) {
-        topCard.value = "";
+        topCard.value = '';
       }
     }
-    cardElement.setAttribute("colour", topCard.colour);
-    cardElement.setAttribute("value", topCard.value);
-    cardElement.setAttribute("icon", topCard.icon);
-    cardElement.setAttribute("suite", topCard.suite);
+    cardElement.setAttribute('colour', topCard.colour);
+    cardElement.setAttribute('value', topCard.value);
+    cardElement.setAttribute('icon', topCard.icon);
+    cardElement.setAttribute('suite', topCard.suite);
     discardPile.appendChild(cardElement);
   } else {
     gameDetails.innerText = `End of round ${game.round}, click to start the next round.`;
-    startGameButton.style.display = "";
-    startGameButton.addEventListener("click", () => {
-      startGame();
-    });
+    startGameButton.style.display = '';
   }
 
   addPlayers('players-top', 0, Math.floor(game.players.length / 2));
@@ -137,16 +143,6 @@ function addPlayers(container, start, end) {
 function showCreateGame() {
   const createGameComponent = document.querySelector('#new-game');
   createGameComponent.style.display = '';
-
-  const createGameButton = document.querySelector('#create-game');
-  createGameButton.addEventListener('click', () => {
-    createGame();
-  });
-
-  const joinGameButton = document.querySelector('#join-game');
-  joinGameButton.addEventListener('click', () => {
-    window.location = '/hand';
-  });
 }
 
 async function createGame() {

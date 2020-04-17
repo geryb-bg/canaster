@@ -114,8 +114,7 @@ customElements.define(
       this.shadow.innerHTML = template(this);
       this.dialog = this.shadow.querySelector('game-dialog');
 
-
-      this.shadow.querySelector('.card').addEventListener('click',() => {
+      this.shadow.querySelector('.card').addEventListener('click', () => {
         if (this.selectable) {
           this.toggleSelected();
         }
@@ -127,9 +126,8 @@ customElements.define(
         button.addEventListener('click', () => {
           this.actingAs = button.innerText;
           this.closeDialog();
-        })
-      })
-
+        });
+      });
     }
 
     connectedCallback() {
@@ -155,11 +153,10 @@ customElements.define(
       return new Promise((resolve) => {
         this.closeDialog = resolve;
         this.dialog.style.display = '';
-      })
+      });
     }
 
     async toggleSelected() {
-
       if (!this.selected && (this.value === '2' || this.value === 'Joker')) {
         await this.askForJokerValue();
         this.dialog.style.display = 'none';
