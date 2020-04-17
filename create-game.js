@@ -159,7 +159,7 @@ const drawPileTurnOver = (game, card, upsideDown) => {
       game.blackThree.icon = card.icon;
       game.blackThree.suite = card.suite;
     } else {
-      drawPileTurnOver(game.drawPile, game.discardPile, drawCard(game.drawPile), false);
+      drawPileTurnOver(game, drawCard(game.drawPile), false);
     }
   }
 };
