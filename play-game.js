@@ -12,7 +12,8 @@ export const playerCards = (playerName, gameId) => {
     return { waiting: true };
   }
 
-  return player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
+  const hand = player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
+  return hand;
 };
 
 export const playerDraw = (playerName, gameId, socketio) => {
@@ -43,8 +44,9 @@ export const playerDraw = (playerName, gameId, socketio) => {
   }
   socketio.toHost(gameId).emit('show-message', message);
 
+  const hand = player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
   return {
-    cards: player.cards.sort((a, b) => a.sortOrder - b.sortOrder),
+    cards: hand,
     new: newCards,
   };
 };
@@ -126,7 +128,8 @@ export const playerDiscard = (playerName, gameId, card, socketio) => {
 
     socketio.toPlayers(gameId).emit('turn-change', game.players[playersTurn].name);
 
-    return player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
+    const hand = player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
+    return hand;
   }
 };
 
@@ -194,8 +197,9 @@ export const meldCardsWithDiscard = (playerName, gameId, meldedCards, socketio) 
 
   socketio.toHost(gameId).emit('show-message', `${playerName} has melded successfully and has the discard pile.`);
 
+  const hand = player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
   return {
-    cards: player.cards.sort((a, b) => a.sortOrder - b.sortOrder),
+    cards: hand,
     new: cardsPickedUpFromDiscard,
   };
 };
@@ -322,7 +326,8 @@ const meldEverything = (player, meldedCards, gameId, socketio) => {
 
   player.canaster = [...player.canaster, ...canasters];
 
-  return player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
+  const hand = player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
+  return hand;
 };
 
 const groupMeldedCards = (meldedCards, invalidCards) => {
@@ -364,11 +369,11 @@ const isValidMeld = (meld, meldKey) => {
 };
 
 const getGameAndPlayer = (gameId, playerName) => {
-  const game = games.find((g) => g.gameId === gameId);
+  const game = games.find((g) => g.gameId === gameId.toLowerCase());
   if (!game) {
     return { errorMessage: `${gameId} game does not exist.` };
   }
-  const player = game.players.find((p) => p.name === playerName);
+  const player = game.players.find((p) => p.name.toLowerCase() === playerName.toLowerCase());
   if (!player) {
     return { errorMessage: `${playerName} player does not exist in this game.` };
   }
@@ -383,6 +388,6 @@ export const drawCard = (drawPile) => {
 };
 
 export const getTurn = (playerName, gameId) => {
-  const game = games.find((g) => g.gameId === gameId);
+  const game = games.find((g) => g.gameId === gameId.toLowerCase());
   return game.players.find((p) => p.myTurn);
 };
