@@ -15,8 +15,15 @@ h3 {
 }
 
 #show-message {
-  margin: 0.5em;
-  height: 2em;
+  padding: 0.5em;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 2em;
+  white-space: pre-line;
+  flex-grow: 1;
 }
 
 #content > .players {
@@ -50,6 +57,8 @@ h3 {
   height: 50px;
   margin: 0 200px;
   align-self: center;
+  border: 1px solid white;
+  width: 200px;
 }
 
 #players-top {
@@ -77,7 +86,7 @@ h3 {
 }
 
 .game-details > * {
-  flex: 1 1 auto;
+  /*flex: 1 1 auto;*/
 }
 
 .game-name {
@@ -95,4 +104,13 @@ h3 {
   display: flex;
   justify-content: center;
   align-items: center;
+  margin: 0.5em;
+}
+
+#card-piles {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  max-width: 400px;
 }
