@@ -99,11 +99,11 @@ export const playerDiscard = (playerName, gameId, card, socketio) => {
 
     if (overallWinner) {
       socketio.toPlayers(gameId).emit('game-over', `Game Over! ${overallWinner} wins!`);
-      return { };
+      return {};
     }
 
     socketio.toPlayers(gameId).emit('round-over', `${playerName} wins round ${game.round}!`);
-    return { };
+    return {};
   } else {
     game.discardPile.push(card);
 
@@ -185,14 +185,19 @@ export const meldCardsWithDiscard = (playerName, gameId, meldedCards, socketio) 
   const cardsPickedUpFromDiscard = game.discardPile;
   game.discardPile = [];
 
+  if (player.extraFirstTurn) {
+    player.extraFirstTurn--;
+    drawAgain(game.drawPile, player, cardsPickedUpFromDiscard);
+  }
+
   socketio.toHost(gameId).emit('game-state', game);
 
   socketio.toHost(gameId).emit('show-message', `${playerName} has melded successfully and has the discard pile.`);
 
   return {
     cards: player.cards.sort((a, b) => a.sortOrder - b.sortOrder),
-    new: cardsPickedUpFromDiscard
-  }
+    new: cardsPickedUpFromDiscard,
+  };
 };
 
 export const meldCards = (playerName, gameId, meldedCards, socketio) => {
@@ -212,7 +217,6 @@ export const meldCards = (playerName, gameId, meldedCards, socketio) => {
     socketio.toHost(gameId).emit('show-message', `${playerName} tried to meld, but has not picked up a card yet.`);
     return { error: 'You must draw a card first' };
   }
-
 
   let message = `${playerName} has melded successfully.`;
   if (player.canaster.length) {
@@ -380,5 +384,5 @@ export const drawCard = (drawPile) => {
 
 export const getTurn = (playerName, gameId) => {
   const game = games.find((g) => g.gameId === gameId);
-  return game.players.find(p => p.myTurn);
+  return game.players.find((p) => p.myTurn);
 };
