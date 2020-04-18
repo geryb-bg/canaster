@@ -3,6 +3,7 @@ import '../components/game-button/game-button.js';
 import '../components/game-dialog/game-dialog.js';
 import '../components/card-collection/card-collection.js';
 import '../components/card-dialog/card-dialog.js';
+import '../components/fullscreen-button/fullscreen-button.js';
 
 import { fetchJson, getGameId, getPlayerName, setPlayerAndGameInUrl, clearNode, showError, groupCards, requestWakeLock } from '../common.js';
 
