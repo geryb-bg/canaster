@@ -1,6 +1,6 @@
 import '../components/game-dialog/game-dialog.js';
 
-import { fetchJson, clearNode } from '../common.js';
+import { fetchJson, clearNode, groupCards } from '../common.js';
 
 const cardDeckList = document.querySelector('#card-deck');
 const meldPointsList = document.querySelector('#meld-points');
@@ -60,9 +60,15 @@ async function begin() {
     }
 
     clearNode(cardPointsList);
-    for (let points of Object.keys(rules.cardPoints)) {
+    const groupedPoints = groupCards(rules.cardPoints);
+    for (let points of Object.keys(groupedPoints)) {
       const pointsElement = document.createElement('li');
-      pointsElement.innerText = `${rules.cardPoints[points]} for a ${points}`;
+      let message = `${points} for `;
+      for (let cardValues of groupedPoints[points]) {
+        message += `${cardValues}, `;
+      }
+      message = message.substr(0, message.length - 2);
+      pointsElement.innerText = message;
       cardPointsList.appendChild(pointsElement);
     }
   }

@@ -4,9 +4,10 @@ import '../components/game-dialog/game-dialog.js';
 import '../components/card-collection/card-collection.js';
 import '../components/card-dialog/card-dialog.js';
 
-import { fetchJson, getGameId, getPlayerName, setPlayerAndGameInUrl, clearNode, showError } from '../common.js';
+import { fetchJson, getGameId, getPlayerName, setPlayerAndGameInUrl, clearNode, showError, groupCards } from '../common.js';
 
 let hand = [];
+let rules = undefined;
 let socket = io();
 
 socket.on('connect', () => {
@@ -24,6 +25,9 @@ socket.on('turn-change', (player) => {
 });
 
 function begin() {
+  if (!rules) {
+    fetchRules();
+  }
   if (getPlayerName() && getGameId()) {
     socket.emit('join-game-player', getGameId());
     fetchHand().then(() => {
@@ -32,6 +36,15 @@ function begin() {
     getPlayerTurn();
   } else {
     showAddNewPlayer();
+  }
+}
+
+async function fetchRules() {
+  const response = await fetchJson(`/allrules`, {
+    method: 'GET',
+  });
+  if (!response.error) {
+    rules = response;
   }
 }
 
@@ -241,6 +254,29 @@ async function meldDiscard() {
   renderHand();
 }
 
+function showInfo() {
+  let message = '<h4>Melds</h4><ul>';
+  for (let points of rules.meldPoints) {
+    message += `<li>From ${points.moreThan} up to ${points.lessThan - 1}, you require ${points.required} points.</li>`;
+  }
+  message += '</ul><h4>Card Points</h4><ul>';
+  const groupedPoints = groupCards(rules.cardPoints);
+  for (let points of Object.keys(groupedPoints)) {
+    message += `<li>${points} for `;
+    for (let cardValues of groupedPoints[points]) {
+      message += `${cardValues}, `;
+    }
+    message = message.substr(0, message.length - 2);
+    message += '</li>';
+  }
+  message += '</ul>';
+  document.dispatchEvent(
+    new CustomEvent('show-message', {
+      detail: { message },
+    })
+  );
+}
+
 const addNewPlayerButton = document.querySelector('#add-new-player-button');
 addNewPlayerButton.onclick = () => addNewPlayer();
 
@@ -255,5 +291,8 @@ meldButton.onclick = async () => meld();
 
 const meldDiscardButton = document.querySelector('#meld-discard');
 meldDiscardButton.onclick = async () => meldDiscard();
+
+const infoButton = document.querySelector('#info-button');
+infoButton.onclick = async () => showInfo();
 
 begin();
