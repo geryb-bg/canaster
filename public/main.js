@@ -114,6 +114,7 @@ function loadGameDetails() {
     cardElement.setAttribute('value', topCard.value);
     cardElement.setAttribute('icon', topCard.icon);
     cardElement.setAttribute('suite', topCard.suite);
+    cardElement.setAttribute('sortOrder', topCard.sortOrder);
     discardPile.appendChild(cardElement);
   } else {
     gameDetails.innerText = `End of round ${game.round}, click to start the next round.`;

@@ -89,6 +89,11 @@ export const playerDiscard = (playerName, gameId, card, socketio) => {
     return { error: 'You must draw a card first' };
   }
 
+  if (!card) {
+    endPlayerTurn(player, game, socketio);
+    return [];
+  }
+
   const playerCard = player.cards.find((c) => c.value === card.value && c.suite === card.suite);
   const indexOfDiscarded = player.cards.indexOf(playerCard);
   if (indexOfDiscarded < 0) {
@@ -119,22 +124,26 @@ export const playerDiscard = (playerName, gameId, card, socketio) => {
       game.blackThree.suite = card.suite;
     }
 
-    player.myTurn = false;
-    player.hasDrawn = false;
-    let playersTurn = game.players.indexOf(player) + 1;
-    if (playersTurn === game.players.length) {
-      playersTurn = 0;
-    }
-    game.players[playersTurn].myTurn = true;
-
-    socketio.toHost(gameId).emit('game-state', game);
-    socketio.toHost(gameId).emit('show-message', `${playerName} discarded a card.\nIt is now ${game.players[playersTurn].name}'s turn.`);
-
-    socketio.toPlayers(gameId).emit('turn-change', game.players[playersTurn].name);
+    endPlayerTurn(player, game, socketio);
 
     const hand = player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
     return hand;
   }
+};
+
+const endPlayerTurn = (player, game, socketio) => {
+  player.myTurn = false;
+  player.hasDrawn = false;
+  let playersTurn = game.players.indexOf(player) + 1;
+  if (playersTurn === game.players.length) {
+    playersTurn = 0;
+  }
+  game.players[playersTurn].myTurn = true;
+
+  socketio.toHost(game.gameId).emit('game-state', game);
+  socketio.toHost(game.gameId).emit('show-message', `${player.name}'s turn has ended.\nIt is now ${game.players[playersTurn].name}'s turn.`);
+
+  socketio.toPlayers(game.gameId).emit('turn-change', game.players[playersTurn].name);
 };
 
 export const meldCardsWithDiscard = (playerName, gameId, meldedCards, socketio) => {

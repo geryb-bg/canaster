@@ -15,7 +15,7 @@ requestWakeLock();
 
 socket.on('connect', () => {
   console.log('connected to server');
-  hideConnectionError()
+  hideConnectionError();
 });
 
 socket.on('reconnect', (attemptNumber) => {
@@ -28,7 +28,7 @@ socket.on('reconnect', (attemptNumber) => {
 
 socket.on('disconnect', (reason) => {
   console.log('disconnect');
-  showConnectionError()
+  showConnectionError();
 });
 
 socket.on('game-started', () => {
@@ -38,11 +38,11 @@ socket.on('game-started', () => {
 });
 
 socket.on('game-over', (msg) => {
-  showMessageOverlay(msg)
+  showMessageOverlay(msg);
 });
 
 socket.on('round-over', (msg) => {
-  showMessageOverlay(msg)
+  showMessageOverlay(msg);
 });
 
 socket.on('turn-change', (player) => {
@@ -150,7 +150,7 @@ async function tryFetchHand() {
   const response = await fetchJson(`/cards/${playerId}/${gameId}`);
 
   if (response.waiting) {
-    showMessageOverlay("Waiting for game to start");
+    showMessageOverlay('Waiting for game to start');
   } else {
     hideMessageOverlay();
     hand = response;
@@ -177,6 +177,7 @@ function renderHand() {
     cardElement.setAttribute('value', card.value);
     cardElement.setAttribute('icon', card.icon);
     cardElement.setAttribute('suite', card.suite);
+    cardElement.setAttribute('sortOrder', card.sortOrder);
     cardElement.selectable = true;
     cardRow.appendChild(cardElement);
   }
@@ -214,7 +215,7 @@ async function drawACard() {
 async function discardCard() {
   const cards = getSelectedCards();
 
-  if (cards.length === 0) {
+  if (!cards.length && hand.length) {
     showError('Please select a card to discard');
     return;
   }
