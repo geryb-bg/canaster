@@ -10,7 +10,7 @@
 </head>
 <body>
 <div id="content">
-    <div id="message"></div>
+    <div id="message" class="message"></div>
     <div id="buttons" style="display: none;">
         <game-button id="draw">Draw card</game-button>
         <game-button id="meld">Meld</game-button>
@@ -35,8 +35,12 @@
     </div>
 </div>
 
-<div id="waiting-overlay" style="display: none;">
+<div id="waiting-overlay" class="overlay" style="display: none;">
     Waiting for the game to start
+</div>
+
+<div id="connection-overlay" class="overlay" style="display: none;">
+    <div id="offline-message">Offline, retrying connection...</div>
 </div>
 
 <script type="module" src="hand.js"></script>
