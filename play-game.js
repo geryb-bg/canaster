@@ -98,12 +98,12 @@ export const playerDiscard = (playerName, gameId, card, socketio) => {
     const overallWinner = endRound(playerName, gameId, socketio);
 
     if (overallWinner) {
-      //TODO player messages here
-      return { error: `Game Over! ${overallWinner} wins!` };
+      socketio.toPlayers(gameId).emit('game-over', `Game Over! ${overallWinner} wins!`);
+      return { };
     }
 
-    //TODO player messages here
-    return { error: `Round ${game.round} over, you win` };
+    socketio.toPlayers(gameId).emit('round-over', `${playerName} wins round ${game.round}!`);
+    return { };
   } else {
     game.discardPile.push(card);
 
@@ -182,13 +182,17 @@ export const meldCardsWithDiscard = (playerName, gameId, meldedCards, socketio) 
 
   game.discardPile.pop();
   player.cards = [...player.cards, ...game.discardPile];
+  const cardsPickedUpFromDiscard = game.discardPile;
   game.discardPile = [];
 
   socketio.toHost(gameId).emit('game-state', game);
 
   socketio.toHost(gameId).emit('show-message', `${playerName} has melded successfully and has the discard pile.`);
 
-  return player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
+  return {
+    cards: player.cards.sort((a, b) => a.sortOrder - b.sortOrder),
+    new: cardsPickedUpFromDiscard
+  }
 };
 
 export const meldCards = (playerName, gameId, meldedCards, socketio) => {

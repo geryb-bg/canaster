@@ -14,9 +14,17 @@ socket.on('connect', () => {
 });
 
 socket.on('game-started', () => {
-  fetchHand().then(() => {
+  tryFetchHand().then(() => {
     renderHand();
   });
+});
+
+socket.on('game-over', (msg) => {
+  showMessageOverlay(msg)
+});
+
+socket.on('round-over', (msg) => {
+  showMessageOverlay(msg)
 });
 
 socket.on('turn-change', (player) => {
@@ -26,7 +34,7 @@ socket.on('turn-change', (player) => {
 function begin() {
   if (getPlayerName() && getGameId()) {
     socket.emit('join-game-player', getGameId());
-    fetchHand().then(() => {
+    tryFetchHand().then(() => {
       renderHand();
     });
     getPlayerTurn();
@@ -96,32 +104,26 @@ async function addNewPlayer() {
   }
 }
 
-const sleep = (milliseconds) => {
-  return new Promise((resolve) => {
-    setTimeout(resolve, milliseconds);
-  });
-};
-
-async function fetchHand() {
+async function tryFetchHand() {
   let playerId = getPlayerName();
   let gameId = getGameId();
   const response = await fetchJson(`/cards/${playerId}/${gameId}`);
 
   if (response.waiting) {
-    showWaitForGameToStart();
-    //await sleep(4000);
-    //return fetchHand();
+    showMessageOverlay("Waiting for game to start");
   } else {
-    hideWaitForGameToStart();
+    hideMessageOverlay();
     hand = response;
   }
 }
 
-function showWaitForGameToStart() {
-  document.querySelector('#waiting-overlay').style.display = '';
+function showMessageOverlay(msg) {
+  const overlay = document.querySelector('#waiting-overlay');
+  overlay.innerText = msg;
+  overlay.style.display = '';
 }
 
-function hideWaitForGameToStart() {
+function hideMessageOverlay() {
   document.querySelector('#waiting-overlay').style.display = 'none';
 }
 
@@ -237,8 +239,12 @@ async function meldDiscard() {
     return;
   }
 
-  hand = response;
+  hand = response.cards;
   renderHand();
+
+  if (response.new && response.new.length > 0) {
+    showCardsInPopup(response.new);
+  }
 }
 
 const addNewPlayerButton = document.querySelector('#add-new-player-button');
