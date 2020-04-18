@@ -84,19 +84,19 @@ app.get('/allrules', (req, res) => {
   res.send(rules);
 });
 
-socketio.toHost = (gameId) => socketio.to(`${gameId}-host`);
-socketio.toPlayers = (gameId) => socketio.to(`${gameId}-players`);
+socketio.toHost = (gameId) => socketio.to(`${gameId.toLowerCase()}-host`);
+socketio.toPlayers = (gameId) => socketio.to(`${gameId.toLowerCase()}-players`);
 
 socketio.on('connection', (socket) => {
   console.log('a user connected');
 
   socket.on('join-game-host', (gameId) => {
-    socket.join(`${gameId}-host`);
+    socket.join(`${gameId.toLowerCase()}-host`);
     console.log('host joined game ' + gameId);
   });
 
   socket.on('join-game-player', (gameId) => {
-    socket.join(`${gameId}-players`);
+    socket.join(`${gameId.toLowerCase()}-players`);
     console.log('player joined game ' + gameId);
   });
 
