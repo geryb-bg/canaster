@@ -32,7 +32,7 @@ export const createGame = () => {
 
 const getName = () => {
   let name = dockerNames.getRandomName();
-  name = name.replace('_', '-');
+  name = name.replace('_', '-').toLowerCase();
   const game = games.find((g) => g.gameId === name);
   if (game) {
     getName();
@@ -41,12 +41,12 @@ const getName = () => {
 };
 
 export const playerJoins = (playerName, gameId, socketio) => {
-  const game = games.find((g) => g.gameId === gameId);
+  const game = games.find((g) => g.gameId === gameId.toLowerCase());
   if (!game) {
     return { error: 'This game does not exist.' };
   }
 
-  const playerExists = game.players.find((p) => p.name === playerName);
+  const playerExists = game.players.find((p) => p.name.toLowerCase() === playerName.toLowerCase());
   if (playerExists) {
     return { msg: 'Player joined' };
   }
@@ -77,7 +77,7 @@ export const playerJoins = (playerName, gameId, socketio) => {
 };
 
 export const startGame = (gameId, socketio) => {
-  const game = games.find((g) => g.gameId === gameId);
+  const game = games.find((g) => g.gameId === gameId.toLowerCase());
   if (!game) {
     return { error: 'This game does not exist.' };
   }

@@ -2,12 +2,12 @@ import { games } from './data/game.js';
 import { rules } from './data/rules.js';
 
 export const endRound = (playerName, gameId, socketio) => {
-  const game = games.find((g) => g.gameId === gameId);
+  const game = games.find((g) => g.gameId === gameId.toLowerCase());
 
   for (let player of game.players) {
     //addPoints
     //winner
-    if (player.name === playerName) {
+    if (player.name.toLowerCase() === playerName.toLowerCase()) {
       player.points += rules.otherPoints.win;
     }
     //canasters
