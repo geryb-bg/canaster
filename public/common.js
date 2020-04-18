@@ -55,3 +55,16 @@ export function showError(msg) {
     })
   );
 }
+
+export function groupCards(cardPoints) {
+  return Object.keys(cardPoints).reduce((group, currentCardValue) => {
+    const currentPointsValue = cardPoints[currentCardValue];
+    let currentGroup = group[currentPointsValue] || [];
+
+    currentGroup.push(currentCardValue);
+
+    group[currentPointsValue] = currentGroup;
+
+    return group;
+  }, {});
+}
