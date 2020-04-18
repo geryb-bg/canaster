@@ -40,7 +40,9 @@ export const playerDraw = (playerName, gameId, socketio) => {
 
   let message = `${playerName} has drawn a card.`;
   if (newCards.length > 1) {
-    message = `${playerName} has drawn a card and ${newCards.length - 1} card(s) for their red threes`;
+    message = `${playerName} has drawn a card\nand ${newCards.length - 1} card${newCards.length === 2 ? '' : 's'} for their red three${
+      newCards.length === 2 ? '' : 's'
+    }`;
   }
 
   socketio.toHost(gameId).emit('game-state', game);
@@ -126,7 +128,7 @@ export const playerDiscard = (playerName, gameId, card, socketio) => {
     game.players[playersTurn].myTurn = true;
 
     socketio.toHost(gameId).emit('game-state', game);
-    socketio.toHost(gameId).emit('show-message', `${playerName} discarded a card, it is now ${game.players[playersTurn].name}'s turn.`);
+    socketio.toHost(gameId).emit('show-message', `${playerName} discarded a card.\nIt is now ${game.players[playersTurn].name}'s turn.`);
 
     socketio.toPlayers(gameId).emit('turn-change', game.players[playersTurn].name);
 
@@ -198,12 +200,12 @@ export const meldCardsWithDiscard = (playerName, gameId, meldedCards, socketio) 
   socketio.toHost(gameId).emit('game-state', game);
 
   let message = `${playerName} has melded successfully.`;
-  message += `<br>They melded: `;
+  message += `\nThey melded: `;
   for (let meldMsg of result.meldsMessage) {
     message += `${meldMsg}s `;
   }
   if (player.canaster.length) {
-    message += `<br>They have ${player.canaster.length} canaster(s) already.`;
+    message += `\nThey have ${player.canaster.length} canaster${player.canaster.length === 1 ? '' : 's'} already.`;
   }
   socketio.toHost(gameId).emit('show-message', message);
 
@@ -236,12 +238,12 @@ export const meldCards = (playerName, gameId, meldedCards, socketio) => {
   if (result.error) return result;
 
   let message = `${playerName} has melded successfully.`;
-  message += `<br>They melded: `;
+  message += `\nThey melded: `;
   for (let meldMsg of result.meldsMessage) {
     message += `${meldMsg}s `;
   }
   if (player.canaster.length) {
-    message += `<br>They have ${player.canaster.length} canaster(s) already.`;
+    message += `\nThey have ${player.canaster.length} canaster${player.canaster.length === 1 ? '' : 's'} already.`;
   }
   socketio.toHost(gameId).emit('show-message', message);
   socketio.toHost(gameId).emit('game-state', game);
