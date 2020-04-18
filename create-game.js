@@ -24,6 +24,7 @@ export const createGame = () => {
       suite: '',
       sortOrder: 2,
     },
+    createdOn: new Date(),
   };
   games.push(gameState);
   return gameState;
