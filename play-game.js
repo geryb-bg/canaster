@@ -209,7 +209,6 @@ export const meldCards = (playerName, gameId, meldedCards, socketio) => {
     return { error: 'You must draw a card first' };
   }
 
-  socketio.toHost(gameId).emit('game-state', game);
 
   let message = `${playerName} has melded successfully.`;
   if (player.canaster.length) {
@@ -217,7 +216,10 @@ export const meldCards = (playerName, gameId, meldedCards, socketio) => {
   }
   socketio.toHost(gameId).emit('show-message', message);
 
-  return meldEverything(player, meldedCards, gameId, socketio);
+  const result = meldEverything(player, meldedCards, gameId, socketio);
+  socketio.toHost(gameId).emit('game-state', game);
+
+  return result;
 };
 
 const meldEverything = (player, meldedCards, gameId, socketio) => {
