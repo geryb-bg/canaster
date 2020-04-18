@@ -8,7 +8,7 @@ export const playerCards = (playerName, gameId) => {
   if (errorMessage) {
     return { error: errorMessage };
   }
-  if (!game.started) {
+  if (!game.started || !game.roundStarted) {
     return { waiting: true };
   }
 
@@ -197,7 +197,11 @@ export const meldCardsWithDiscard = (playerName, gameId, meldedCards, socketio) 
 
   socketio.toHost(gameId).emit('game-state', game);
 
-  socketio.toHost(gameId).emit('show-message', `${playerName} has melded successfully and has the discard pile.`);
+  let message = `${playerName} has melded successfully and has the discard pile. `;
+  if (player.canaster.length) {
+    message += `They have ${player.canaster.length} canaster(s) already.`;
+  }
+  socketio.toHost(gameId).emit('show-message', message);
 
   const hand = player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
   return {
@@ -224,7 +228,7 @@ export const meldCards = (playerName, gameId, meldedCards, socketio) => {
     return { error: 'You must draw a card first' };
   }
 
-  let message = `${playerName} has melded successfully.`;
+  let message = `${playerName} has melded successfully. `;
   if (player.canaster.length) {
     message += `They have ${player.canaster.length} canaster(s) already.`;
   }
