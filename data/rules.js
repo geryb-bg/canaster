@@ -8,9 +8,9 @@ export const rules = {
     { players: 6, packs: 3 },
   ],
   meldPoints: [
-    { moreThan: 0, lessThan: 1500, required: 50 },
-    { moreThan: 1500, lessThan: 3000, required: 90 },
-    { moreThan: 3000, lessThan: 5000, required: 120 },
+    { moreThan: 0, lessThan: 1000, required: 50 },
+    { moreThan: 1000, lessThan: 2000, required: 90 },
+    { moreThan: 2000, lessThan: 3000, required: 120 },
   ],
   cardPoints: {
     4: 5,
@@ -36,5 +36,5 @@ export const rules = {
       red: 500,
     },
   },
-  winningPoints: 5000,
+  winningPoints: 3000,
 };

@@ -291,7 +291,7 @@ const meldEverything = (player, meldedCards, gameId, socketio) => {
 
         player.meld[meldKey] = combinedMeld;
 
-        if (combinedMeld.length >= 8) {
+        if (combinedMeld.length >= 7) {
           canasters.push({ value: meldKey, colour: numJokers ? 'black' : 'red' });
         }
       } else {
@@ -303,7 +303,7 @@ const meldEverything = (player, meldedCards, gameId, socketio) => {
 
         player.meld[meldKey] = meld;
 
-        if (meld.length >= 8) {
+        if (meld.length >= 7) {
           const numJokers = meld.filter((c) => c.value === 'Joker' || c.value === '2').length;
           canasters.push({ value: meldKey, colour: numJokers ? 'black' : 'red' });
         }
@@ -330,7 +330,7 @@ const meldEverything = (player, meldedCards, gameId, socketio) => {
       //remainder
       totalScore += rules.cardPoints[meldKey] * (meld.length - numJokers);
 
-      if (meld.length >= 8) {
+      if (meld.length >= 7) {
         canasters.push({ value: meldKey, colour: numJokers ? 'black' : 'red' });
       }
       meldsMessage.push(meldKey);
