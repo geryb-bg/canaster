@@ -42,6 +42,8 @@ export const playerDraw = (playerName, gameId, socketio) => {
   if (newCards.length > 1) {
     message = `${playerName} has drawn a card and ${newCards.length - 1} card(s) for their red threes`;
   }
+
+  socketio.toHost(gameId).emit('game-state', game);
   socketio.toHost(gameId).emit('show-message', message);
 
   const hand = player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
