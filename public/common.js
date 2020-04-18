@@ -68,3 +68,14 @@ export function groupCards(cardPoints) {
     return group;
   }, {});
 }
+
+import './libs/NoSleep.js'
+
+export const requestWakeLock = async () => {
+  const noSleep = new NoSleep();
+  document.addEventListener('click', function enableNoSleep() {
+    console.log('Wake lock enabled');
+    document.removeEventListener('click', enableNoSleep, false);
+    noSleep.enable();
+  }, false);
+};

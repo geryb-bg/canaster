@@ -4,11 +4,13 @@ import '../components/game-dialog/game-dialog.js';
 import '../components/card-collection/card-collection.js';
 import '../components/card-dialog/card-dialog.js';
 
-import { fetchJson, getGameId, getPlayerName, setPlayerAndGameInUrl, clearNode, showError, groupCards } from '../common.js';
+import { fetchJson, getGameId, getPlayerName, setPlayerAndGameInUrl, clearNode, showError, groupCards, requestWakeLock } from '../common.js';
 
 let hand = [];
 let rules = undefined;
 let socket = io();
+
+requestWakeLock();
 
 socket.on('connect', () => {
   console.log('connected to server');
