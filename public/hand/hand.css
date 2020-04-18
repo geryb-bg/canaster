@@ -21,7 +21,7 @@
   font-size: 1.5rem;
 }
 
-#waiting-overlay {
+.overlay {
   position: absolute;
   background-color: #2c7e39;
   height: 100%;
@@ -32,6 +32,20 @@
   justify-content: center;
   color: white;
   font-size: 1.5rem;
+}
+
+#offline-message {
+  border-radius: 20px;
+  color: white;
+  background-color: #2c7e39;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+#connection-overlay {
+  background-color: rgba(0,0,0,0.7);
 }
 
 #new-player #form {
@@ -72,13 +86,19 @@
   left: 10px;
 }
 
+#fullscreen-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
 #card-row {
   justify-content: center;
 }
 
-#message {
+.message {
   height: 1em;
   text-align: center;
-  margin-bottom: 0.5em;
+  margin: 0.5em;
   color: white;
 }

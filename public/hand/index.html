@@ -1,43 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
+<head>
+    <meta charset="UTF-8"/>
     <title>Awesome Friends canaster - Player</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" type="text/css" href="../style/reset.css" />
-    <link rel="stylesheet" type="text/css" href="hand.css" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" type="text/css" href="../style/reset.css"/>
+    <link rel="stylesheet" type="text/css" href="hand.css"/>
     <script src="/socket.io/socket.io.js"></script>
-  </head>
-  <body>
-    <div id="content">
-      <div id="message"></div>
-      <div id="buttons" style="display: none;">
+</head>
+<body>
+<div id="content">
+    <div id="message" class="message"></div>
+    <div id="buttons" style="display: none;">
         <game-button id="draw">Draw card</game-button>
         <game-button id="meld">Meld</game-button>
         <game-button id="meld-discard">Meld using discard pile</game-button>
         <game-button id="discard">Discard</game-button>
-      </div>
-      <game-button id="info-button">ℹ</game-button>
-      <br />
-      <card-collection id="card-row"></card-collection>
     </div>
+    <game-button id="info-button">ℹ</game-button>
+    <fullscreen-button id="fullscreen-button"></fullscreen-button>
+    <br/>
+    <card-collection id="card-row"></card-collection>
+</div>
 
-    <div id="new-player" style="display: none;">
-      <div id="form">
+<div id="new-player" style="display: none;">
+    <div id="form">
         <label for="game-id">Enter the Game Name</label>
-        <input id="game-id" type="text" />
-        <br />
+        <input id="game-id" type="text"/>
+        <br/>
         <label for="game-id">Enter Your Name</label>
-        <input id="player-name" type="text" />
-        <br />
+        <input id="player-name" type="text"/>
+        <br/>
         <game-button id="add-new-player-button">OK</game-button>
-      </div>
     </div>
+</div>
 
-    <div id="waiting-overlay" style="display: none;">
-      Waiting for the game to start
-    </div>
+<div id="waiting-overlay" class="overlay" style="display: none;">
+    Waiting for the game to start
+</div>
 
-    <script type="module" src="hand.js"></script>
-  </body>
+<div id="connection-overlay" class="overlay" style="display: none;">
+    <div id="offline-message">Offline, retrying connection...</div>
+</div>
+
+<script type="module" src="hand.js"></script>
+</body>
 </html>

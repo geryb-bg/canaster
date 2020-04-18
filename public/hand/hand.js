@@ -3,6 +3,7 @@ import '../components/game-button/game-button.js';
 import '../components/game-dialog/game-dialog.js';
 import '../components/card-collection/card-collection.js';
 import '../components/card-dialog/card-dialog.js';
+import '../components/fullscreen-button/fullscreen-button.js';
 
 import { fetchJson, getGameId, getPlayerName, setPlayerAndGameInUrl, clearNode, showError, groupCards, requestWakeLock } from '../common.js';
 
@@ -14,6 +15,20 @@ requestWakeLock();
 
 socket.on('connect', () => {
   console.log('connected to server');
+  hideConnectionError()
+});
+
+socket.on('reconnect', (attemptNumber) => {
+  console.log('reconnect');
+  hideConnectionError();
+  tryFetchHand().then(() => {
+    renderHand();
+  });
+});
+
+socket.on('disconnect', (reason) => {
+  console.log('disconnect');
+  showConnectionError()
 });
 
 socket.on('game-started', () => {
@@ -73,6 +88,16 @@ function setPlayerTurn(player) {
     document.querySelector('#buttons').style.display = 'none';
     document.querySelector('#message').innerText = `It is ${player}'s turn`;
   }
+}
+
+function showConnectionError() {
+  const connectionOverlay = document.querySelector('#connection-overlay');
+  connectionOverlay.style.display = '';
+}
+
+function hideConnectionError() {
+  const connectionOverlay = document.querySelector('#connection-overlay');
+  connectionOverlay.style.display = 'none';
 }
 
 function showAddNewPlayer() {
