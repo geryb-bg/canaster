@@ -16,6 +16,10 @@ const joinGameButton = document.querySelector('#join-game');
 joinGameButton.onclick = () => {
   window.location = '/hand';
 };
+const rulesPageButton = document.querySelector('#rules-page');
+rulesPageButton.onclick = () => {
+  window.open('/rules');
+};
 
 let game;
 let socket = io();
