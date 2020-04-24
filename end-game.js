@@ -4,7 +4,10 @@ import { rules } from './data/rules.js';
 export const endRound = (playerName, gameId, socketio) => {
   const game = games.find((g) => g.gameId === gameId.toLowerCase());
 
+  let roundScores = {};
+
   for (let player of game.players) {
+    const pointsAtStartOfRound = player.points;
     //addPoints
     //winner
     if (player.name.toLowerCase() === playerName.toLowerCase()) {
@@ -48,6 +51,8 @@ export const endRound = (playerName, gameId, socketio) => {
       }
     }
 
+    roundScores[player.name] = player.points - pointsAtStartOfRound;
+
     if (player.points >= rules.winningPoints) {
       if (game.gameOver && player.points < game.winningScore) {
         continue;
@@ -58,9 +63,16 @@ export const endRound = (playerName, gameId, socketio) => {
     }
   }
 
+  // If game is over show total scores
+  if (game.winner) {
+    for (let player of game.players) {
+      roundScores[player.name] = player.points;
+    }
+  }
+
   game.roundStarted = false;
 
-  socketio.toHost(gameId).emit('game-state', game);
+  socketio.toHost(game.gameId).emit('game-state', game);
 
-  return game.winner;
+  return { overallWinner: game.winner, roundScores: roundScores};
 };

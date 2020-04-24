@@ -107,15 +107,15 @@ export const playerDiscard = (playerName, gameId, card, socketio) => {
   player.cards.splice(indexOfDiscarded, 1);
 
   if (!player.cards.length && Object.keys(player.canaster).length) {
-    const overallWinner = endRound(playerName, gameId, socketio);
+    const { overallWinner, roundScores } = endRound(playerName, gameId, socketio);
 
     if (overallWinner) {
-      socketio.toPlayers(gameId).emit('game-over', `Game Over! ${overallWinner} wins!`);
-      return {};
+      socketio.toPlayers(gameId).emit('game-over', {winner: playerName, round: game.round, scores: roundScores});
+      return [];
     }
 
-    socketio.toPlayers(gameId).emit('round-over', `${playerName} wins round ${game.round}!`);
-    return {};
+    socketio.toPlayers(gameId).emit('round-over', {winner: playerName, round: game.round, scores: roundScores});
+    return [];
   } else {
     game.discardPile.push(card);
 

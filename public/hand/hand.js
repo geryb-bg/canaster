@@ -36,11 +36,12 @@ socket.on('game-started', () => {
 });
 
 socket.on('game-over', (msg) => {
-  showMessageOverlay(msg);
+  msg.gameOver = true;
+  showMessageOverlay(formatGameScore(msg));
 });
 
 socket.on('round-over', (msg) => {
-  showMessageOverlay(msg);
+  showMessageOverlay(formatGameScore(msg));
 });
 
 socket.on('turn-change', (player) => {
@@ -60,6 +61,19 @@ function begin() {
   } else {
     showAddNewPlayer();
   }
+}
+
+function formatGameScore({round, winner, scores, gameOver}) {
+  let msg = gameOver ? `Game over! ${winner} wins!\n` : `${winner} wins round ${round}.\n`;
+  msg += gameOver ? '\nFinal scores:\n' : `\nRound scores:\n`;
+  const scoreArr = Object.entries(scores);
+  scoreArr.sort((a,b) => b[1] - a[1]);
+
+  for (let playerScore of scoreArr) {
+    msg += `${playerScore[0]}: ${playerScore[1]}\n`
+  }
+
+  return msg;
 }
 
 async function fetchRules() {

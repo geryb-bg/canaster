@@ -103,6 +103,7 @@ function loadGameDetails() {
   if (game.gameOver) {
     gameDetails.innerText = `Game Over! The winner is ${game.winner}`;
     startGameButton.style.display = 'none';
+    renderPlayers(game);
     return;
   }
 
@@ -141,6 +142,10 @@ function loadGameDetails() {
     startGameButton.style.display = '';
   }
 
+  renderPlayers(game);
+}
+
+function renderPlayers(game) {
   addPlayers('players-top', 0, Math.floor(game.players.length / 2));
   addPlayers('players-bot', Math.floor(game.players.length / 2), game.players.length);
 }
