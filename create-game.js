@@ -120,7 +120,7 @@ const clearGameBoard = (game) => {
     player.myTurn = false;
     player.hasDrawn = false;
     player.extraFirstTurn = 0;
-    player.canaster = [];
+    player.canaster = {};
   }
 };
 

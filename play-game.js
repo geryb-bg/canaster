@@ -106,7 +106,7 @@ export const playerDiscard = (playerName, gameId, card, socketio) => {
 
   player.cards.splice(indexOfDiscarded, 1);
 
-  if (!player.cards.length && player.canaster.length) {
+  if (!player.cards.length && Object.keys(player.canaster).length) {
     const overallWinner = endRound(playerName, gameId, socketio);
 
     if (overallWinner) {
@@ -214,8 +214,9 @@ export const meldCardsWithDiscard = (playerName, gameId, meldedCards, socketio) 
   for (let meldMsg of result.meldsMessage) {
     message += `${meldMsg}s `;
   }
-  if (player.canaster.length) {
-    message += `\nThey have ${player.canaster.length} canaster${player.canaster.length === 1 ? '' : 's'} already.`;
+  const numCanasters = Object.keys(player.canaster).length;
+  if (numCanasters) {
+    message += `\nThey have ${numCanasters} canaster${numCanasters === 1 ? '' : 's'}.`;
   }
   socketio.toHost(gameId).emit('show-message', message);
 
@@ -252,8 +253,10 @@ export const meldCards = (playerName, gameId, meldedCards, socketio) => {
   for (let meldMsg of result.meldsMessage) {
     message += `${meldMsg}s `;
   }
-  if (player.canaster.length) {
-    message += `\nThey have ${player.canaster.length} canaster${player.canaster.length === 1 ? '' : 's'} already.`;
+
+  const numCanasters = Object.keys(player.canaster).length;
+  if (numCanasters) {
+    message += `\nThey have ${numCanasters} canaster${numCanasters === 1 ? '' : 's'} already.`;
   }
   socketio.toHost(gameId).emit('show-message', message);
   socketio.toHost(gameId).emit('game-state', game);
@@ -274,7 +277,7 @@ const meldEverything = (player, meldedCards, gameId, socketio) => {
     return { error: 'You have submitted one or more cards that can not be melded' };
   }
 
-  const canasters = [];
+  const newCanasters = {};
   const meldsMessage = [];
   if (Object.keys(player.meld).length) {
     for (let meldKey of Object.keys(newMeld)) {
@@ -293,7 +296,7 @@ const meldEverything = (player, meldedCards, gameId, socketio) => {
         player.meld[meldKey] = combinedMeld;
 
         if (combinedMeld.length >= 7) {
-          canasters.push({ value: meldKey, colour: numJokers ? 'black' : 'red' });
+          newCanasters[meldKey] = { value: meldKey, colour: numJokers ? 'black' : 'red' };
         }
       } else {
         const errorMessage = isValidMeld(meld, meldKey);
@@ -306,7 +309,7 @@ const meldEverything = (player, meldedCards, gameId, socketio) => {
 
         if (meld.length >= 7) {
           const numJokers = meld.filter((c) => c.value === 'Joker' || c.value === '2').length;
-          canasters.push({ value: meldKey, colour: numJokers ? 'black' : 'red' });
+          newCanasters[meldKey] = { value: meldKey, colour: numJokers ? 'black' : 'red' };
         }
       }
       meldsMessage.push(meldKey);
@@ -332,7 +335,7 @@ const meldEverything = (player, meldedCards, gameId, socketio) => {
       totalScore += rules.cardPoints[meldKey] * (meld.length - numJokers);
 
       if (meld.length >= 7) {
-        canasters.push({ value: meldKey, colour: numJokers ? 'black' : 'red' });
+        newCanasters[meldKey] = { value: meldKey, colour: numJokers ? 'black' : 'red' };
       }
       meldsMessage.push(meldKey);
     }
@@ -354,7 +357,7 @@ const meldEverything = (player, meldedCards, gameId, socketio) => {
     }
   }
 
-  player.canaster = [...player.canaster, ...canasters];
+  player.canaster = {...player.canaster, ...newCanasters};
 
   const hand = player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
   return { hand, meldsMessage };

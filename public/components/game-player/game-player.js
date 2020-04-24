@@ -70,18 +70,13 @@ const renderCanaster = (canasterCards, colour) => {
   `;
 };
 
-const meldIsCanaster = (meldKey, player) => {
-  return player.canaster.find((c) => c.value === meldKey);
-};
-
 const renderMelds = (player) => {
   let canasters = [];
   let melds = [];
   for (let meldKey of Object.keys(player.meld)) {
     const meld = player.meld[meldKey];
-    const canasterLabel = meldIsCanaster(meldKey, player);
-    if (canasterLabel) {
-      canasters.push({ meld: meld, colour: canasterLabel.colour });
+    if (player.canaster[meldKey]) {
+      canasters.push({ meld: meld, colour: player.canaster[meldKey].colour });
     } else {
       melds.push(meld);
     }

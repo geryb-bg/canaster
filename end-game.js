@@ -11,7 +11,8 @@ export const endRound = (playerName, gameId, socketio) => {
       player.points += rules.otherPoints.win;
     }
     //canasters
-    for (let canaster of player.canaster) {
+    for (let canasterId of Object.keys(player.canaster)) {
+      const canaster = player.canaster[canasterId];
       player.points += rules.otherPoints.canaster[canaster.colour];
     }
     //red threes
