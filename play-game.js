@@ -172,7 +172,7 @@ export const meldCardsWithDiscard = (playerName, gameId, meldedCards, socketio) 
   }
 
   if (!player.cards.length) {
-    socketio.toHost(gameId).emit('show-message', `${playerName} tried to pick up the discard pile, but is not allowed to as they have no cards in their hand.`);
+    socketio.toHost(gameId).emit('show-message', `${playerName} tried to pick up the discard pile, \nbut is not allowed to as they have no cards in their hand.`);
     return { error: 'You need to have cards in your hand in order to pick up from the discard pile.' };
   }
 
@@ -209,7 +209,7 @@ export const meldCardsWithDiscard = (playerName, gameId, meldedCards, socketio) 
 
   socketio.toHost(gameId).emit('game-state', game);
 
-  let message = `${playerName} has melded successfully.`;
+  let message = `${playerName} melded with the discard pile and picked up ${cardsPickedUpFromDiscard.length} cards.`;
   message += `\nThey melded: `;
   for (let meldMsg of result.meldsMessage) {
     message += `${meldMsg}s `;
@@ -342,7 +342,7 @@ const meldEverything = (player, meldedCards, gameId, socketio) => {
 
     const requiredMeldPoints = rules.meldPoints.find((p) => p.moreThan <= player.points && p.lessThan > player.points);
     if (requiredMeldPoints.required > totalScore) {
-      socketio.toHost(gameId).emit('show-message', `${player.name} tried to meld with ${totalScore}, but requires ${requiredMeldPoints.required}.`);
+      socketio.toHost(gameId).emit('show-message', `${player.name} tried to meld with ${totalScore},\nbut requires ${requiredMeldPoints.required}.`);
       return { error: `Your meld only has ${totalScore} points and you require ${requiredMeldPoints.required}` };
     }
 
