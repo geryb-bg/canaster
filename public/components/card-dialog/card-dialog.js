@@ -54,6 +54,7 @@ customElements.define(
         cardElement.setAttribute("value", card.value);
         cardElement.setAttribute("icon", card.icon);
         cardElement.setAttribute("suite", card.suite);
+        cardElement.setAttribute("sortOrder", card.sortOrder);
         cardCollection.appendChild(cardElement);
       }
 
