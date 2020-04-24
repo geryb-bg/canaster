@@ -25,12 +25,24 @@ let game;
 let socket = io();
 
 socket.on('connect', () => {
+  hideConnectionError();
   console.log('connected to server');
 });
 
 socket.on('game-state', (gameState) => {
   game = gameState;
   loadGameDetails();
+});
+
+socket.on('disconnect', (reason) => {
+  showConnectionError();
+  console.log('disconnect');
+});
+
+socket.on('reconnect', (attemptNumber) => {
+  hideConnectionError();
+  console.log('reconnected');
+  begin();
 });
 
 let hideMsgTimeout;
@@ -51,6 +63,16 @@ function begin() {
   } else {
     showCreateGame();
   }
+}
+
+function showConnectionError() {
+  const connectionOverlay = document.querySelector('#connection-overlay');
+  connectionOverlay.style.display = '';
+}
+
+function hideConnectionError() {
+  const connectionOverlay = document.querySelector('#connection-overlay');
+  connectionOverlay.style.display = 'none';
 }
 
 function showCurrentGame(gameId) {
