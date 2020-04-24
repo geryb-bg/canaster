@@ -61,6 +61,7 @@ const drawAgain = (drawPile, player, newCards) => {
 
   if (newCard.value === '3' && newCard.colour === 'red') {
     player.redThrees.push(newCard);
+    player.extraFirstTurn++;
   } else {
     player.cards.push(newCard);
   }
