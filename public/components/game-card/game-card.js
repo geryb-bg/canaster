@@ -97,7 +97,7 @@ customElements.define(
   'game-card',
   class GameCard extends HTMLElement {
     static get observedAttributes() {
-      return ['colour', 'value', 'icon', 'suite', 'sortOrder'];
+      return ['colour', 'value', 'icon', 'suite', 'sortorder'];
     }
 
     constructor() {
@@ -140,7 +140,7 @@ customElements.define(
         value: this.value,
         icon: this.icon,
         suite: this.suite,
-        sortOrder: this.sortOrder,
+        sortOrder: this.sortorder,
       };
 
       if (this.actingAs) {

@@ -175,7 +175,7 @@ function renderHand() {
     cardElement.setAttribute('value', card.value);
     cardElement.setAttribute('icon', card.icon);
     cardElement.setAttribute('suite', card.suite);
-    cardElement.setAttribute('sortOrder', card.sortOrder);
+    cardElement.setAttribute('sortorder', card.sortOrder);
     cardElement.selectable = true;
     cardRow.appendChild(cardElement);
   }
