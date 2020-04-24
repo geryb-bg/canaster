@@ -5,13 +5,11 @@ import '../components/card-collection/card-collection.js';
 import '../components/card-dialog/card-dialog.js';
 import '../components/fullscreen-button/fullscreen-button.js';
 
-import { fetchJson, getGameId, getPlayerName, setPlayerAndGameInUrl, clearNode, showError, groupCards, requestWakeLock } from '../common.js';
+import { fetchJson, getGameId, getPlayerName, setPlayerAndGameInUrl, clearNode, showError, groupCards } from '../common.js';
 
 let hand = [];
 let rules = undefined;
 let socket = io();
-
-requestWakeLock();
 
 socket.on('connect', () => {
   console.log('connected to server');

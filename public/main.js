@@ -2,9 +2,7 @@ import '../components/game-button/game-button.js';
 import '../components/game-dialog/game-dialog.js';
 import '../components/game-player/game-player.js';
 
-import { fetchJson, getGameId, setGameInUrl, clearNode, requestWakeLock } from './common.js';
-
-requestWakeLock();
+import { fetchJson, getGameId, setGameInUrl, clearNode } from './common.js';
 
 const startGameButton = document.querySelector('#start-game');
 startGameButton.onclick = () => {
