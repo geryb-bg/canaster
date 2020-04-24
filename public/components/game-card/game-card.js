@@ -140,7 +140,7 @@ customElements.define(
         value: this.value,
         icon: this.icon,
         suite: this.suite,
-        sortOrder: this.sortorder,
+        sortOrder: parseInt(this.sortorder),
       };
 
       if (this.actingAs) {
