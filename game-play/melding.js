@@ -55,7 +55,7 @@ export const meldCardsWithDiscard = (playerName, gameId, meldedCards, socketio) 
   player.hasDrawn = true;
 
   game.discardPile.pop();
-  player.cards = [...player.cards, ...game.discardPile];
+  addCardsToHand(player, game.discardPile);
   const cardsPickedUpFromDiscard = game.discardPile;
   game.discardPile = [];
 
@@ -82,6 +82,16 @@ export const meldCardsWithDiscard = (playerName, gameId, meldedCards, socketio) 
     cards: hand,
     new: cardsPickedUpFromDiscard,
   };
+};
+
+const addCardsToHand = (player, discardPile) => {
+  for (let cardToAdd of discardPile) {
+    if (cardToAdd.value === '3' && cardToAdd.colour === 'red') {
+      player.redThrees.push(cardToAdd);
+    } else {
+      player.cards.push(cardToAdd);
+    }
+  }
 };
 
 export const meldCards = (playerName, gameId, meldedCards, socketio) => {
