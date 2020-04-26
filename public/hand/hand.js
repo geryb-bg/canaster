@@ -63,14 +63,14 @@ function begin() {
   }
 }
 
-function formatGameScore({round, winner, scores, gameOver}) {
+function formatGameScore({ round, winner, scores, gameOver }) {
   let msg = gameOver ? `Game over! ${winner} wins!\n` : `${winner} wins round ${round}.\n`;
   msg += gameOver ? '\nFinal scores:\n' : `\nRound scores:\n`;
   const scoreArr = Object.entries(scores);
-  scoreArr.sort((a,b) => b[1] - a[1]);
+  scoreArr.sort((a, b) => b[1] - a[1]);
 
   for (let playerScore of scoreArr) {
-    msg += `${playerScore[0]}: ${playerScore[1]}\n`
+    msg += `${playerScore[0]}: ${playerScore[1]}\n`;
   }
 
   return msg;
@@ -86,7 +86,7 @@ async function fetchRules() {
 }
 
 async function getPlayerTurn() {
-  const response = await fetchJson(`/turn/${getPlayerName()}/${getGameId()}`);
+  const response = await fetchJson(`/turn/${getGameId()}`);
   if (!response.error) {
     setPlayerTurn(response.player);
   }

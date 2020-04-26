@@ -5,7 +5,10 @@ import io from 'socket.io';
 import { createGame, playerJoins, startGame } from './create-game.js';
 import { games } from './data/game.js';
 import { rules } from './data/rules.js';
-import { playerCards, playerDraw, playerDiscard, meldCards, meldCardsWithDiscard, getTurn } from './play-game.js';
+import { meldCards, meldCardsWithDiscard } from './game-play/melding.js';
+import { playerCards, getTurn } from './game-play/player.js';
+import { playerDraw } from './game-play/draw.js';
+import { playerDiscard } from './game-play/discard.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -35,8 +38,8 @@ app.put('/game/:gameId', (req, res) => {
   res.send(game);
 });
 
-app.get('/turn/:playerName/:gameId', (req, res) => {
-  const playerTurn = getTurn(req.params.playerName, req.params.gameId);
+app.get('/turn/:gameId', (req, res) => {
+  const playerTurn = getTurn(req.params.gameId);
   if (playerTurn) {
     res.send({ player: playerTurn.name });
   } else {

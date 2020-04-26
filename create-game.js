@@ -2,7 +2,7 @@ import dockerNames from 'docker-names';
 import { cards } from './data/cards.js';
 import { rules } from './data/rules.js';
 import { games } from './data/game.js';
-import { drawCard } from './play-game.js';
+import { drawCard } from './game-play/draw.js';
 
 export const createGame = () => {
   const newGameId = getName();
@@ -132,8 +132,8 @@ const assignPacks = (game) => {
 };
 
 const dealCards = (game) => {
-  for (let player of game.players) {
-    for (let i = 0; i < rules.startingHand; i++) {
+  for (let i = 0; i < rules.startingHand; i++) {
+    for (let player of game.players) {
       const newCard = drawCard(game.drawPile);
       if (newCard.value === '3' && newCard.colour === 'red') {
         player.redThrees.push(newCard);

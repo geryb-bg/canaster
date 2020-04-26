@@ -1,151 +1,6 @@
-import { games } from './data/game.js';
-import { cards } from './data/cards.js';
-import { rules } from './data/rules.js';
-import { endRound } from './end-game.js';
-
-export const playerCards = (playerName, gameId) => {
-  const { game, player, errorMessage } = getGameAndPlayer(gameId, playerName);
-  if (errorMessage) {
-    return { error: errorMessage };
-  }
-  if (!game.started || !game.roundStarted) {
-    return { waiting: true };
-  }
-
-  const hand = player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
-  return hand;
-};
-
-export const playerDraw = (playerName, gameId, socketio) => {
-  const { game, player, errorMessage } = getGameAndPlayer(gameId, playerName);
-  if (errorMessage) {
-    return { error: errorMessage };
-  }
-  if (!game.started) {
-    return { error: `${gameId} game has not yet started.` };
-  }
-
-  if (!player.myTurn) {
-    socketio.toHost(gameId).emit('show-message', `${playerName} tried to draw a card, but it is not their turn.`);
-    return { error: 'It is not your turn!' };
-  }
-  if (player.hasDrawn) {
-    socketio.toHost(gameId).emit('show-message', `${playerName} tried to draw another card.`);
-    return { error: 'You have already drawn a card' };
-  }
-
-  const newCards = [];
-  drawAgain(game.drawPile, player, newCards);
-  player.hasDrawn = true;
-
-  let message = `${playerName} has drawn a card.`;
-  if (newCards.length > 1) {
-    message = `${playerName} has drawn a card\nand ${newCards.length - 1} card${newCards.length === 2 ? '' : 's'} for their red three${
-      newCards.length === 2 ? '' : 's'
-    }`;
-  }
-
-  socketio.toHost(gameId).emit('game-state', game);
-  socketio.toHost(gameId).emit('show-message', message);
-
-  const hand = player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
-  return {
-    cards: hand,
-    new: newCards,
-  };
-};
-
-const drawAgain = (drawPile, player, newCards) => {
-  const newCard = drawCard(drawPile);
-  newCards.push(newCard);
-
-  if (newCard.value === '3' && newCard.colour === 'red') {
-    player.redThrees.push(newCard);
-    player.extraFirstTurn++;
-  } else {
-    player.cards.push(newCard);
-  }
-
-  if (player.extraFirstTurn) {
-    player.extraFirstTurn--;
-    drawAgain(drawPile, player, newCards);
-  }
-};
-
-export const playerDiscard = (playerName, gameId, card, socketio) => {
-  const { game, player, errorMessage } = getGameAndPlayer(gameId, playerName);
-  if (errorMessage) {
-    return { error: errorMessage };
-  }
-  if (!game.started) {
-    return { error: `${gameId} game has not yet started.` };
-  }
-
-  if (!player.myTurn) {
-    socketio.toHost(gameId).emit('show-message', `${playerName} tried to discard a card, but it is not their turn.`);
-    return { error: 'It is not your turn!' };
-  }
-  if (!player.hasDrawn) {
-    socketio.toHost(gameId).emit('show-message', `${playerName} tried to discard a card before drawing one.`);
-    return { error: 'You must draw a card first' };
-  }
-
-  if (!card) {
-    endPlayerTurn(player, game, socketio);
-    return [];
-  }
-
-  const playerCard = player.cards.find((c) => c.value === card.value && c.suite === card.suite);
-  const indexOfDiscarded = player.cards.indexOf(playerCard);
-  if (indexOfDiscarded < 0) {
-    socketio
-      .toHost(gameId)
-      .emit('show-message', `Not sure how, but ${playerName} tried to discard a card they don't have. Could you please stop trying to cheat?`);
-    return { error: 'This card is not in your hand' };
-  }
-
-  player.cards.splice(indexOfDiscarded, 1);
-
-  if (!player.cards.length && Object.keys(player.canaster).length) {
-    const { overallWinner, roundScores } = endRound(playerName, gameId, socketio);
-
-    if (overallWinner) {
-      socketio.toPlayers(gameId).emit('game-over', {winner: playerName, round: game.round, scores: roundScores});
-      return [];
-    }
-
-    socketio.toPlayers(gameId).emit('round-over', {winner: playerName, round: game.round, scores: roundScores});
-    return [];
-  } else {
-    game.discardPile.push(card);
-
-    if (card.value === '3' && card.colour === 'black') {
-      game.discardPile = [];
-      game.blackThree.icon = card.icon;
-      game.blackThree.suite = card.suite;
-    }
-
-    endPlayerTurn(player, game, socketio);
-
-    const hand = player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
-    return hand;
-  }
-};
-
-const endPlayerTurn = (player, game, socketio) => {
-  player.myTurn = false;
-  player.hasDrawn = false;
-  let playersTurn = game.players.indexOf(player) + 1;
-  if (playersTurn === game.players.length) {
-    playersTurn = 0;
-  }
-  game.players[playersTurn].myTurn = true;
-
-  socketio.toHost(game.gameId).emit('game-state', game);
-  socketio.toHost(game.gameId).emit('show-message', `${player.name}'s turn has ended.\nIt is now ${game.players[playersTurn].name}'s turn.`);
-
-  socketio.toPlayers(game.gameId).emit('turn-change', game.players[playersTurn].name);
-};
+import { cards } from '../data/cards.js';
+import { rules } from '../data/rules.js';
+import { getGameAndPlayer } from './player.js';
 
 export const meldCardsWithDiscard = (playerName, gameId, meldedCards, socketio) => {
   const { game, player, errorMessage } = getGameAndPlayer(gameId, playerName);
@@ -172,7 +27,9 @@ export const meldCardsWithDiscard = (playerName, gameId, meldedCards, socketio) 
   }
 
   if (!player.cards.length) {
-    socketio.toHost(gameId).emit('show-message', `${playerName} tried to pick up the discard pile, \nbut is not allowed to as they have no cards in their hand.`);
+    socketio
+      .toHost(gameId)
+      .emit('show-message', `${playerName} tried to pick up the discard pile, \nbut is not allowed to as they have no cards in their hand.`);
     return { error: 'You need to have cards in your hand in order to pick up from the discard pile.' };
   }
 
@@ -357,7 +214,7 @@ const meldEverything = (player, meldedCards, gameId, socketio) => {
     }
   }
 
-  player.canaster = {...player.canaster, ...newCanasters};
+  player.canaster = { ...player.canaster, ...newCanasters };
 
   const hand = player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
   return { hand, meldsMessage };
@@ -399,28 +256,4 @@ const isValidMeld = (meld, meldKey) => {
   if (numJokers >= meld.length - numJokers) {
     return `${meldKey}s meld has too many jokers`;
   }
-};
-
-const getGameAndPlayer = (gameId, playerName) => {
-  const game = games.find((g) => g.gameId === gameId.toLowerCase());
-  if (!game) {
-    return { errorMessage: `${gameId} game does not exist.` };
-  }
-  const player = game.players.find((p) => p.name.toLowerCase() === playerName.toLowerCase());
-  if (!player) {
-    return { errorMessage: `${playerName} player does not exist in this game.` };
-  }
-
-  return { game, player };
-};
-
-export const drawCard = (drawPile) => {
-  const randomIndex = Math.floor(Math.random() * drawPile.length);
-  const chosenCard = drawPile.splice(randomIndex, 1);
-  return chosenCard[0];
-};
-
-export const getTurn = (playerName, gameId) => {
-  const game = games.find((g) => g.gameId === gameId.toLowerCase());
-  return game.players.find((p) => p.myTurn);
 };

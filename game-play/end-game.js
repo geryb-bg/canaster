@@ -1,5 +1,5 @@
-import { games } from './data/game.js';
-import { rules } from './data/rules.js';
+import { games } from '../data/game.js';
+import { rules } from '../data/rules.js';
 
 export const endRound = (playerName, gameId, socketio) => {
   const game = games.find((g) => g.gameId === gameId.toLowerCase());
@@ -74,5 +74,5 @@ export const endRound = (playerName, gameId, socketio) => {
 
   socketio.toHost(game.gameId).emit('game-state', game);
 
-  return { overallWinner: game.winner, roundScores: roundScores};
+  return { overallWinner: game.winner, roundScores: roundScores };
 };
