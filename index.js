@@ -16,12 +16,6 @@ const socketio = io(httpServer);
 app.use(bodyParser.json());
 app.use(express.static('public'));
 
-app.get('/', (req, res) => res.send('Hello World!'));
-
-app.get('/game', (req, res) => {
-  res.send(games);
-});
-
 app.get('/game/:gameId', (req, res) => {
   const game = games.find((g) => g.gameId === req.params.gameId.toLowerCase());
   if (!game) {
