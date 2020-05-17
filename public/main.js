@@ -53,7 +53,7 @@ socket.on('show-message', (msg) => {
   msgElement.innerText = msg;
   hideMsgTimeout = setTimeout(() => {
     msgElement.innerText = '';
-  }, 5000);
+  }, 20000);
 });
 
 function begin() {
