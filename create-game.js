@@ -101,23 +101,24 @@ export const startGame = (gameId, socketio, options) => {
   game.started = true;
   game.round++;
   game.roundStarted = true;
-  const playersTurn = game.round % game.players.length;
-  game.players[playersTurn].myTurn = true;
+  const playerIndex = game.round % game.players.length;
+  const playersTurn = game.players[playerIndex];
+  playersTurn.myTurn = true;
   assignPacks(game);
   dealCards(game);
 
   if (game.options.shufflePlayers) {
-    shufflePlayerOrder(game)
+    shufflePlayerOrder(game);
   }
 
   socketio.toPlayers(gameId).emit('game-started');
-  socketio.toPlayers(gameId).emit('turn-change', game.players[playersTurn].name);
+  socketio.toPlayers(gameId).emit('turn-change', playersTurn.name);
 
   return game;
 };
 
 const shufflePlayerOrder = (game) => {
-  shuffle(game.players)
+  shuffle(game.players);
 };
 
 function shuffle(array) {
