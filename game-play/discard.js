@@ -15,6 +15,9 @@ export const playerDiscard = (playerName, gameId, card, socketio) => {
     return { error: 'It is not your turn!' };
   }
   if (!player.hasDrawn) {
+    if (!game.drawPile.length) {
+      return endRound('', gameId, socketio);
+    }
     socketio.toHost(gameId).emit('show-message', `${playerName} tried to discard a card before drawing one.`);
     return { error: 'You must draw a card first' };
   }
@@ -36,22 +39,30 @@ export const playerDiscard = (playerName, gameId, card, socketio) => {
   player.cards.splice(indexOfDiscarded, 1);
 
   if (!player.cards.length && Object.keys(player.canaster).length) {
-    endRound(playerName, gameId, socketio);
-    return [];
-  } else {
-    game.discardPile.push(card);
-
-    if (card.value === '3' && card.colour === 'black') {
-      game.discardPile = [];
-      game.blackThree.icon = card.icon;
-      game.blackThree.suite = card.suite;
-    }
-
-    endPlayerTurn(player, game, socketio);
-
-    const hand = player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
-    return hand;
+    return endRound(playerName, gameId, socketio);
   }
+
+  game.discardPile.push(card);
+
+  if (card.value === '3' && card.colour === 'black') {
+    game.discardPile = [];
+    game.blackThree.icon = card.icon;
+    game.blackThree.suite = card.suite;
+    if (!game.drawPile.length) {
+      return endRound('', gameId, socketio);
+    }
+  }
+
+  if (card.value === '2' || card.value === 'Joker') {
+    if (!game.drawPile.length) {
+      return endRound('', gameId, socketio);
+    }
+  }
+
+  endPlayerTurn(player, game, socketio);
+
+  const hand = player.cards.sort((a, b) => a.sortOrder - b.sortOrder);
+  return hand;
 };
 
 const endPlayerTurn = (player, game, socketio) => {

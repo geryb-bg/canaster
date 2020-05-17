@@ -1,7 +1,7 @@
 import { games } from '../data/game.js';
 import { rules } from '../data/rules.js';
 
-export const endRound = (playerName, gameId, socketio) => {
+export const endRound = (winnerName, gameId, socketio) => {
   const game = games.find((g) => g.gameId === gameId.toLowerCase());
 
   let roundScores = {};
@@ -10,7 +10,7 @@ export const endRound = (playerName, gameId, socketio) => {
     const pointsAtStartOfRound = player.points;
     //addPoints
     //winner
-    if (player.name.toLowerCase() === playerName.toLowerCase()) {
+    if (player.name.toLowerCase() === winnerName.toLowerCase()) {
       player.points += rules.otherPoints.win;
     }
     //canasters
@@ -68,12 +68,14 @@ export const endRound = (playerName, gameId, socketio) => {
     for (let player of game.players) {
       roundScores[player.name] = player.points;
     }
-    socketio.toPlayers(gameId).emit('game-over', { winner: playerName, round: game.round, scores: roundScores });
+    socketio.toPlayers(gameId).emit('game-over', { winner: game.winner, round: game.round, scores: roundScores });
   } else {
-    socketio.toPlayers(gameId).emit('round-over', { winner: playerName, round: game.round, scores: roundScores });
+    socketio.toPlayers(gameId).emit('round-over', { winner: winnerName, round: game.round, scores: roundScores });
   }
 
   game.roundStarted = false;
 
   socketio.toHost(game.gameId).emit('game-state', game);
+
+  return [];
 };
