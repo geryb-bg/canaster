@@ -8,6 +8,9 @@ const startGameButton = document.querySelector('#start-game');
 startGameButton.onclick = () => {
   startGame();
 };
+
+const gameOptions = document.querySelector('#game-options');
+
 const createGameButton = document.querySelector('#create-game');
 createGameButton.onclick = () => {
   createGame();
@@ -100,6 +103,9 @@ function loadGameDetails() {
   const discardPile = document.querySelector('#discard-pile');
   clearNode(discardPile);
 
+  const msgElement = document.querySelector('#show-message');
+  msgElement.innerText = "";
+
   if (game.gameOver) {
     gameDetails.innerText = `Game Over! The winner is ${game.winner}`;
     startGameButton.style.display = 'none';
@@ -110,9 +116,11 @@ function loadGameDetails() {
   if (!game.started) {
     gameDetails.innerText = `Waiting to start`;
     startGameButton.style.display = '';
+    gameOptions.style.display = '';
   } else if (game.roundStarted) {
     gameDetails.innerText = `Round: ${game.round}`;
     startGameButton.style.display = 'none';
+    gameOptions.style.display = 'none';
 
     const drawPileCard = document.createElement('game-card');
     drawPileCard.stacked = true;
@@ -140,6 +148,7 @@ function loadGameDetails() {
   } else {
     gameDetails.innerText = `End of round ${game.round}, click to start the next round.`;
     startGameButton.style.display = '';
+    gameOptions.style.display = 'none';
   }
 
   renderPlayers(game);
@@ -153,10 +162,19 @@ function renderPlayers(game) {
 async function startGame() {
   const response = await fetchJson(`/game/${game.gameId}`, {
     method: 'PUT',
+    body: JSON.stringify(getGameOptions()),
+    headers: { 'Content-Type': 'application/json' },
   });
   if (!response.error) {
     game = response;
     loadGameDetails();
+  }
+}
+
+function getGameOptions() {
+  const shufflePlayersCheckbox = document.querySelector('#option-shuffle-players');
+  return {
+    shufflePlayers: shufflePlayersCheckbox.checked
   }
 }
 

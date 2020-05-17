@@ -76,7 +76,7 @@ export const playerJoins = (playerName, gameId, socketio) => {
   return { msg: 'Player joined' };
 };
 
-export const startGame = (gameId, socketio) => {
+export const startGame = (gameId, socketio, options) => {
   const game = games.find((g) => g.gameId === gameId.toLowerCase());
   if (!game) {
     return { error: 'This game does not exist.' };
@@ -90,6 +90,10 @@ export const startGame = (gameId, socketio) => {
   if (game.roundStarted) {
     return { error: 'This round has already started.' };
   }
+  //only set game options when we first start the game
+  if (game.round === 0) {
+    game.options = options;
+  }
   if (game.round > 0) {
     clearGameBoard(game);
   }
@@ -102,11 +106,26 @@ export const startGame = (gameId, socketio) => {
   assignPacks(game);
   dealCards(game);
 
+  if (game.options.shufflePlayers) {
+    shufflePlayerOrder(game)
+  }
+
   socketio.toPlayers(gameId).emit('game-started');
   socketio.toPlayers(gameId).emit('turn-change', game.players[playersTurn].name);
 
   return game;
 };
+
+const shufflePlayerOrder = (game) => {
+  shuffle(game.players)
+};
+
+function shuffle(array) {
+  for (let i = array.length - 1; i > 0; i--) {
+    let j = Math.floor(Math.random() * (i + 1));
+    [array[i], array[j]] = [array[j], array[i]];
+  }
+}
 
 const clearGameBoard = (game) => {
   game.drawPile = [];

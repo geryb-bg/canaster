@@ -55,7 +55,7 @@ h3 {
 
 #start-game {
   height: 50px;
-  margin: 0 200px;
+  margin: 1em 200px;
   align-self: center;
   border: 1px solid white;
   width: 200px;
@@ -140,4 +140,15 @@ h3 {
 
 #connection-overlay {
   background-color: rgba(0,0,0,0.7);
+}
+
+#game-options {
+  color: white;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  background-color: #004900;
+  margin: 1em 0;
+  padding: 0 1em;
 }

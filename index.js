@@ -34,7 +34,8 @@ app.post('/game', (req, res) => {
 });
 
 app.put('/game/:gameId', (req, res) => {
-  const game = startGame(req.params.gameId, socketio);
+  const options = req.body;
+  const game = startGame(req.params.gameId, socketio, options);
   res.send(game);
 });
 

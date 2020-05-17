@@ -16,15 +16,21 @@
         <div class="game-name">
           <h2 id="game-name"></h2>
           <h3 id="game-details"></h3>
-
+          <game-button id="start-game" style="display: none;">Start game</game-button>
         </div>
         <div id="card-piles">
           <div id="draw-pile"></div>
           <div id="discard-pile"></div>
         </div>
+        <div id="game-options" style="display: none">
+          <h4>Game Options</h4>
+          <div>
+            <input type="checkbox" checked id="option-shuffle-players" name="shuffle-players" value="shuffle-players">
+            <label for="option-shuffle-players">Shuffle players between rounds</label>
+          </div>
+        </div>
         <div id="show-message"></div>
 
-        <game-button id="start-game" style="display: none;">Start game</game-button>
       </div>
       <div id="players-bot" class="players"></div>
     </div>
