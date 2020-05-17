@@ -125,6 +125,12 @@ function loadGameDetails() {
     const drawPileCard = document.createElement('game-card');
     drawPileCard.stacked = true;
     drawPileCard.upsideDown = true;
+    if (game.drawPile.length === 1) {
+      drawPileCard.stacked = false;
+    }
+    if (game.drawPile.length === 0) {
+      drawPileCard.empty = true;
+    }
     drawPile.appendChild(drawPileCard);
 
     const cardElement = document.createElement('game-card');
@@ -145,6 +151,8 @@ function loadGameDetails() {
     cardElement.setAttribute('suite', topCard.suite);
     cardElement.setAttribute('sortOrder', topCard.sortOrder);
     discardPile.appendChild(cardElement);
+
+    setRemainingCardsLeft(game)
   } else {
     gameDetails.innerText = `End of round ${game.round}, click to start the next round.`;
     startGameButton.style.display = '';
@@ -152,6 +160,25 @@ function loadGameDetails() {
   }
 
   renderPlayers(game);
+}
+
+function setRemainingCardsLeft(game) {
+  const cardsRemainingElement = document.querySelector('#cards-remaining');
+
+  const cardsLeft = game.drawPile.length;
+  if (cardsLeft <= 10) {
+    if (cardsLeft === 1) {
+      cardsRemainingElement.innerText = `${cardsLeft} card left`
+    } else {
+      cardsRemainingElement.innerText = `${cardsLeft} cards left`
+    }
+    cardsRemainingElement.style.display = '';
+  } else {
+    cardsRemainingElement.innerText = ``;
+    cardsRemainingElement.style.display = 'none';
+  }
+
+
 }
 
 function renderPlayers(game) {
