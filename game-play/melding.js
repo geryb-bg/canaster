@@ -59,6 +59,9 @@ export const meldCardsWithDiscard = (playerName, gameId, meldedCards, socketio) 
   const cardsPickedUpFromDiscard = game.discardPile;
   game.discardPile = [];
 
+  // this will only happen on the first meld
+  // so technically the draw pile should not be empty
+  // this is why we don't care about the return of drawAgain
   if (player.extraFirstTurn) {
     player.extraFirstTurn--;
     drawAgain(game.drawPile, player, cardsPickedUpFromDiscard);

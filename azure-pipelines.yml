@@ -1,29 +1,38 @@
+# what will make this pipeline run
+# here you could set it to run on every pull request as well
 trigger:
   - master
 
+# what platform it should build on
 pool:
-  vmImage: 'Ubuntu-16.04'
+  vmImage: "Ubuntu-16.04"
 
+# steps are either scripts or tasks
 steps:
+  # the @ signifies the task version
+  # for built in tasks we usually select the latest available one
+  # you can also create your own tasks
   - task: NodeTool@0
     inputs:
-      versionSpec: '12.x'
-    displayName: 'Install Node.js'
+      versionSpec: "12.x"
+    displayName: "Install Node.js"
 
+  # this is an example of a script
+  # it can be anything that is run in the command line
   - script: |
-      npm install
-    displayName: 'Install the server dependencies'
+      npm install --prod
+    displayName: "Install the server dependencies"
+
+  # npm test
 
   - task: CopyFiles@2
     inputs:
-      SourceFolder: '$(System.DefaultWorkingDirectory)'
+      SourceFolder: "$(System.DefaultWorkingDirectory)"
       Contents: |
-        **/*
-        *
-        !node_modules/
-      TargetFolder: '$(Build.ArtifactStagingDirectory)/api'
+        **
+      TargetFolder: "$(Build.ArtifactStagingDirectory)/api"
 
   - task: PublishBuildArtifacts@1
     inputs:
-      pathtoPublish: '$(Build.ArtifactStagingDirectory)/api'
+      pathtoPublish: "$(Build.ArtifactStagingDirectory)/api"
       artifactName: api
