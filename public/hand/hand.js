@@ -11,6 +11,12 @@ let hand = [];
 let rules = undefined;
 let socket = io();
 
+setInterval(() => {
+  if (!socket.connected) {
+    socket.open();
+  }
+}, 2000);
+
 socket.on('connect', () => {
   console.log('connected to server');
   hideConnectionError();
@@ -100,10 +106,17 @@ async function getPlayerTurn() {
   }
 }
 
+function notifyPlayerTurn() {
+  if (window.navigator.vibrate) {
+    window.navigator.vibrate(500);
+  }
+}
+
 function setPlayerTurn(player) {
   if (player === getPlayerName()) {
     document.querySelector('#buttons').style.display = '';
     document.querySelector('#message').innerText = 'It is your turn';
+    notifyPlayerTurn();
   } else {
     document.querySelector('#buttons').style.display = 'none';
     document.querySelector('#message').innerText = `It is ${player}'s turn`;

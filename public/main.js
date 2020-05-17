@@ -27,6 +27,12 @@ rulesPageButton.onclick = () => {
 let game;
 let socket = io();
 
+setInterval(() => {
+  if (!socket.connected) {
+    socket.open();
+  }
+}, 2000);
+
 socket.on('connect', () => {
   hideConnectionError();
   console.log('connected to server');
