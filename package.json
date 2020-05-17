@@ -8,7 +8,7 @@
     "debug": "nodemon --experimental-modules --inspect index.js",
     "start": "PORT=8080 node --experimental-modules --inspect index.js"
   },
-  "author": "",
+  "author": "Gergana & Richard Young",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",

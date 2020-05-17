@@ -1,4 +1,5 @@
 import { getGameAndPlayer } from './player.js';
+import { endRound } from './end-game.js';
 
 export const playerDraw = (playerName, gameId, socketio) => {
   const { game, player, errorMessage } = getGameAndPlayer(gameId, playerName);
@@ -19,7 +20,13 @@ export const playerDraw = (playerName, gameId, socketio) => {
   }
 
   const newCards = [];
-  drawAgain(game.drawPile, player, newCards);
+  const drawResult = drawAgain(game.drawPile, player, newCards);
+
+  if (drawResult.endGame) {
+    endRound('', gameId, socketio);
+    return { cards: [] };
+  }
+
   player.hasDrawn = true;
 
   let message = `${playerName} has drawn a card.`;
@@ -46,14 +53,19 @@ const drawAgain = (drawPile, player, newCards) => {
   if (newCard.value === '3' && newCard.colour === 'red') {
     player.redThrees.push(newCard);
     player.extraFirstTurn++;
+    if (drawPile.length === 0) {
+      return { endGame: true };
+    }
   } else {
     player.cards.push(newCard);
   }
 
   if (player.extraFirstTurn) {
     player.extraFirstTurn--;
-    drawAgain(drawPile, player, newCards);
+    return drawAgain(drawPile, player, newCards);
   }
+
+  return { endGame: false };
 };
 
 export const drawCard = (drawPile) => {

@@ -64,7 +64,15 @@ function begin() {
 }
 
 function formatGameScore({ round, winner, scores, gameOver }) {
-  let msg = gameOver ? `Game over! ${winner} wins!\n` : `${winner} wins round ${round}.\n`;
+  let winningMsg;
+  if (gameOver) {
+    winningMsg = `Game over! ${winner} wins!\n`;
+  } else if (winner) {
+    winningMsg = `${winner} wins round ${round}.\n`;
+  } else {
+    winningMsg = `Nobody wins round ${round}.\n0 cards in draw pile.`;
+  }
+  let msg = winningMsg;
   msg += gameOver ? '\nFinal scores:\n' : `\nRound scores:\n`;
   const scoreArr = Object.entries(scores);
   scoreArr.sort((a, b) => b[1] - a[1]);

@@ -68,11 +68,12 @@ export const endRound = (playerName, gameId, socketio) => {
     for (let player of game.players) {
       roundScores[player.name] = player.points;
     }
+    socketio.toPlayers(gameId).emit('game-over', { winner: playerName, round: game.round, scores: roundScores });
+  } else {
+    socketio.toPlayers(gameId).emit('round-over', { winner: playerName, round: game.round, scores: roundScores });
   }
 
   game.roundStarted = false;
 
   socketio.toHost(game.gameId).emit('game-state', game);
-
-  return { overallWinner: game.winner, roundScores: roundScores };
 };
