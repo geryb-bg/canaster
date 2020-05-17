@@ -11,6 +11,12 @@ let hand = [];
 let rules = undefined;
 let socket = io();
 
+setInterval(() => {
+  if (!socket.connected) {
+    socket.open();
+  }
+}, 2000);
+
 socket.on('connect', () => {
   console.log('connected to server');
   hideConnectionError();
