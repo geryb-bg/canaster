@@ -93,6 +93,20 @@ const template = (props) => `
     </game-dialog>
 `;
 
+const emptyCard = (obj) =>`
+    <style>
+        .card {
+            user-select: none;
+            box-sizing: border-box;
+            width: 100px;
+            height: 150px;
+        }
+    </style>
+    <div class="card">
+    
+    </div>
+`;
+
 customElements.define(
   'game-card',
   class GameCard extends HTMLElement {
@@ -111,6 +125,10 @@ customElements.define(
     }
 
     render() {
+      if (this.empty) {
+        this.shadow.innerHTML = emptyCard(this);
+        return
+      }
       this.shadow.innerHTML = template(this);
       this.dialog = this.shadow.querySelector('game-dialog');
 
