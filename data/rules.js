@@ -8,7 +8,7 @@ export const rules = {
     { players: 6, packs: 3 },
   ],
   meldPoints: [
-    { moreThan: 0, lessThan: 1000, required: 50 },
+    { moreThan: -10000, lessThan: 1000, required: 50 },
     { moreThan: 1000, lessThan: 2000, required: 90 },
     { moreThan: 2000, lessThan: 3000, required: 120 },
   ],
