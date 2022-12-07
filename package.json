@@ -11,9 +11,9 @@
   "author": "Gergana & Richard Young",
   "license": "ISC",
   "dependencies": {
-    "body-parser": "^1.19.0",
+    "body-parser": "^1.20.1",
     "docker-names": "^1.1.1",
-    "express": "^4.17.1",
+    "express": "^4.18.2",
     "socket.io": "^2.3.0"
   },
   "devDependencies": {
